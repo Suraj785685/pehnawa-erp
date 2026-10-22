@@ -2,21 +2,232 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pehnawa ERP</title>
-  <style>
-    body { font-family: Arial, sans-serif; background: #f1f5f9; padding: 20px; }
-    .card { background: white; padding: 24px; border-radius: 12px; }
-    h1 { color: #17345c; }
-    button { background: #2459a9; color: white; padding: 12px; border: 0; border-radius: 8px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pehnawa ERP | Dashboard</title>
+<style>
+:root {
+  --navy:#172554; --blue:#3157d5; --bg:#f4f7fc;
+  --text:#172033; --muted:#748097; --line:#e8edf5;
+  --green:#14966b; --red:#d94b5b; --white:#fff;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0; font-family:Arial, sans-serif;
+  color:var(--text); background:var(--bg);
+}
+button { font:inherit; cursor:pointer; }
+.app { display:flex; min-height:100vh; }
+.sidebar {
+  width:245px; flex-shrink:0; background:var(--navy);
+  color:white; padding:24px 16px;
+}
+.brand { font-size:23px; font-weight:800; padding:5px 10px 28px; }
+.brand small { display:block; font-size:11px; color:#b8c7ee;
+  font-weight:400; margin-top:7px; letter-spacing:2px; }
+.nav-label { color:#9eafd9; font-size:11px; margin:15px 10px 10px; }
+.nav {
+  display:block; width:100%; border:0; text-align:left;
+  padding:13px 12px; margin:4px 0; border-radius:9px;
+  color:#dbe5ff; background:transparent;
+}
+.nav.active, .nav:hover { background:#30447b; color:white; }
+.side-note { margin:35px 8px 0; font-size:12px; line-height:1.7; color:#b8c7ee; }
+.main { flex:1; min-width:0; }
+.topbar {
+  background:white; padding:18px 28px; border-bottom:1px solid var(--line);
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.menu-btn { display:none; border:0; background:#eef2ff; padding:9px 12px; border-radius:8px; }
+.company { font-size:13px; color:var(--muted); }
+.profile { display:flex; align-items:center; gap:10px; font-size:13px; font-weight:700; }
+.avatar { background:#dce6ff; color:#2747a8; padding:10px; border-radius:50%; }
+.content { padding:28px; max-width:1500px; margin:auto; }
+.heading { display:flex; justify-content:space-between; align-items:center; gap:15px; flex-wrap:wrap; }
+h1 { font-size:27px; margin:0 0 8px; }
+.subtitle { color:var(--muted); font-size:14px; }
+.primary {
+  border:0; background:var(--blue); color:white; border-radius:9px;
+  padding:12px 16px; font-weight:700;
+}
+.cards { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; margin:25px 0; }
+.card, .panel { background:white; border:1px solid var(--line); border-radius:14px; }
+.card { padding:19px; min-width:0; }
+.card-top { display:flex; justify-content:space-between; gap:8px; align-items:center; }
+.card-label { color:var(--muted); font-size:13px; }
+.icon-box { background:#edf2ff; padding:10px; border-radius:10px; }
+.metric { font-size:clamp(21px,2.3vw,29px); font-weight:800; margin:17px 0 8px; overflow-wrap:anywhere; }
+.trend { font-size:12px; color:var(--green); }
+.trend.neutral { color:var(--muted); }
+.grid-main { display:grid; grid-template-columns:minmax(0,1.7fr) minmax(260px,1fr); gap:18px; }
+.panel { padding:21px; margin-bottom:18px; min-width:0; }
+.panel-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:18px; }
+h2 { font-size:16px; margin:0; }
+.panel-sub { font-size:12px; color:var(--muted); margin-top:6px; }
+select { border:1px solid var(--line); border-radius:8px; padding:8px; background:white; color:var(--text); }
+.chart { width:100%; height:auto; display:block; }
+.legend { display:flex; gap:18px; font-size:12px; color:var(--muted); margin-top:12px; }
+.dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; background:#3157d5; }
+.dot.two { background:#9eb4ff; }
+.progress-row { margin:20px 0; }
+.progress-info { display:flex; justify-content:space-between; gap:10px; font-size:13px; margin-bottom:9px; }
+.track { height:8px; border-radius:9px; background:#edf1f8; overflow:hidden; }
+.fill { height:100%; border-radius:9px; background:#3157d5; }
+.fill.green { background:#19a579; }
+.fill.orange { background:#f2a444; }
+.alert { padding:13px; background:#fff8e9; border:1px solid #ffebc0; border-radius:10px; margin:12px 0; }
+.alert strong { font-size:13px; display:block; margin-bottom:5px; }
+.alert span { font-size:12px; color:#7c6841; }
+.table-wrap { overflow-x:auto; }
+table { border-collapse:collapse; width:100%; font-size:13px; white-space:nowrap; }
+th { color:var(--muted); text-align:left; font-weight:600; background:#fafbfe; }
+th, td { padding:14px 12px; border-bottom:1px solid var(--line); }
+.status { display:inline-block; padding:6px 9px; border-radius:20px; font-size:11px; font-weight:700; }
+.paid { background:#e6f8ef; color:#13845b; }
+.pending { background:#fff2d9; color:#9a680c; }
+.page { display:none; }
+.page.active { display:block; }
+.empty { padding:35px 10px; color:var(--muted); text-align:center; line-height:1.8; }
+.footer { color:var(--muted); text-align:center; padding:18px 0; font-size:12px; }
+@media(max-width:1050px) {
+  .cards { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .grid-main { grid-template-columns:1fr; }
+}
+@media(max-width:700px) {
+  .sidebar { display:none; position:fixed; z-index:5; inset:0 auto 0 0; width:245px; }
+  .sidebar.open { display:block; }
+  .menu-btn { display:block; }
+  .topbar { padding:14px 16px; }
+  .company { display:none; }
+  .content { padding:20px 14px; }
+  h1 { font-size:23px; }
+  .cards { gap:10px; margin:20px 0; }
+  .card { padding:13px; }
+  .metric { font-size:22px; }
+  .panel { padding:15px; }
+  .profile-name { display:none; }
+}
+</style>
 </head>
 <body>
-  <div class="card">
-    <h1>Pehnawa ERP</h1>
-    <p>Accounting & Inventory Management</p>
-    <button onclick="alert('Pehnawa ERP is working!')">Test ERP</button>
-  </div>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">PEHNAWA <small>ENTERPRISE ERP</small></div>
+    <div class="nav-label">WORKSPACE</div>
+    <button class="nav active" data-page="dashboard">▦ &nbsp; Dashboard</button>
+    <button class="nav" data-page="sales">↗ &nbsp; Sales</button>
+    <button class="nav" data-page="purchases">↙ &nbsp; Purchases</button>
+    <button class="nav" data-page="inventory">▤ &nbsp; Inventory</button>
+    <button class="nav" data-page="parties">♙ &nbsp; Customers & Suppliers</button>
+    <button class="nav" data-page="reports">▥ &nbsp; Reports</button>
+    <div class="nav-label">SYSTEM</div>
+    <button class="nav" data-page="settings">⚙ &nbsp; Settings</button>
+    <div class="side-note">Pehnawa ERP<br>Accounting & Inventory Management</div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
+        <div class="company">Workspace / <strong id="crumb">Dashboard</strong></div>
+      </div>
+      <div class="profile"><span class="avatar">P</span><span class="profile-name">Pehnawa Admin</span></div>
+    </header>
+
+    <div class="content">
+      <section class="page active" id="dashboard">
+        <div class="heading">
+          <div><h1>Business Overview</h1><div class="subtitle">Welcome back! Here is your business snapshot.</div></div>
+          <button class="primary" id="dateBtn">▦ &nbsp; Today</button>
+        </div>
+
+        <div class="cards">
+          <div class="card"><div class="card-top"><span class="card-label">Total Sales</span><span class="icon-box">↗</span></div><div class="metric">₹2,48,500</div><div class="trend">Demo figure · Not live data</div></div>
+          <div class="card"><div class="card-top"><span class="card-label">Purchases</span><span class="icon-box">▣</span></div><div class="metric">₹1,36,200</div><div class="trend neutral">Demo figure · Not live data</div></div>
+          <div class="card"><div class="card-top"><span class="card-label">Gross Profit</span><span class="icon-box">◈</span></div><div class="metric">₹62,300</div><div class="trend">Illustrative only</div></div>
+          <div class="card"><div class="card-top"><span class="card-label">Receivables</span><span class="icon-box">₹</span></div><div class="metric">₹38,450</div><div class="trend neutral">Demo outstanding</div></div>
+        </div>
+
+        <div class="grid-main">
+          <div>
+            <div class="panel">
+              <div class="panel-head"><div><h2>Sales & Purchases</h2><div class="panel-sub">Illustrative monthly trend</div></div><select id="period"><option>Last 6 months</option><option>Last 3 months</option></select></div>
+              <svg class="chart" viewBox="0 0 600 255" role="img" aria-label="Illustrative sales and purchases line chart">
+                <g stroke="#e8edf5" stroke-width="1"><path d="M45 30H580 M45 75H580 M45 120H580 M45 165H580 M45 210H580"/></g>
+                <g fill="#8792a8" font-size="11"><text x="6" y="34">₹3L</text><text x="6" y="79">₹2.5L</text><text x="6" y="124">₹2L</text><text x="6" y="169">₹1L</text><text x="45" y="235">May</text><text x="145" y="235">Jun</text><text x="245" y="235">Jul</text><text x="345" y="235">Aug</text><text x="445" y="235">Sep</text><text x="545" y="235">Oct</text></g>
+                <path d="M50 150 L150 115 L250 130 L350 75 L450 95 L550 48" fill="none" stroke="#3157d5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M50 185 L150 160 L250 175 L350 135 L450 150 L550 115" fill="none" stroke="#9eb4ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <g fill="#3157d5"><circle cx="50" cy="150" r="4"/><circle cx="150" cy="115" r="4"/><circle cx="250" cy="130" r="4"/><circle cx="350" cy="75" r="4"/><circle cx="450" cy="95" r="4"/><circle cx="550" cy="48" r="4"/></g>
+              </svg>
+              <div class="legend"><span><i class="dot"></i>Sales</span><span><i class="dot two"></i>Purchases</span></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head"><div><h2>Recent Invoices</h2><div class="panel-sub">Sample records for layout preview</div></div><button class="primary" id="allInvoices">View all</button></div>
+              <div class="table-wrap"><table>
+                <thead><tr><th>Invoice</th><th>Party</th><th>Date</th><th>Amount</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td>INV-1001</td><td>Sample Customer A</td><td>22 Oct 2026</td><td>₹12,500</td><td><span class="status paid">Paid</span></td></tr>
+                  <tr><td>INV-1002</td><td>Sample Customer B</td><td>21 Oct 2026</td><td>₹8,200</td><td><span class="status pending">Pending</span></td></tr>
+                  <tr><td>INV-1003</td><td>Sample Customer C</td><td>20 Oct 2026</td><td>₹6,750</td><td><span class="status paid">Paid</span></td></tr>
+                </tbody>
+              </table></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="panel">
+              <div class="panel-head"><div><h2>Stock Summary</h2><div class="panel-sub">Example inventory distribution</div></div></div>
+              <div class="progress-row"><div class="progress-info"><span>Ready stock</span><strong>68%</strong></div><div class="track"><div class="fill" style="width:68%"></div></div></div>
+              <div class="progress-row"><div class="progress-info"><span>Low stock</span><strong>22%</strong></div><div class="track"><div class="fill orange" style="width:22%"></div></div></div>
+              <div class="progress-row"><div class="progress-info"><span>Out of stock</span><strong>10%</strong></div><div class="track"><div class="fill green" style="width:10%"></div></div></div>
+              <div class="panel-sub">Percentages are sample values, not actual stock.</div>
+            </div>
+            <div class="panel">
+              <div class="panel-head"><div><h2>Stock Alerts</h2><div class="panel-sub">Sample low-stock reminders</div></div></div>
+              <div class="alert"><strong>⚠ Sample Item A</strong><span>Only 4 units left · Demo alert</span></div>
+              <div class="alert"><strong>⚠ Sample Item B</strong><span>Only 2 units left · Demo alert</span></div>
+            </div>
+            <div class="panel">
+              <h2>Quick Actions</h2>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:15px">
+                <button class="primary quick" data-target="sales">＋ Sales</button>
+                <button class="primary quick" data-target="purchases">＋ Purchase</button>
+                <button class="primary quick" data-target="inventory">＋ Product</button>
+                <button class="primary quick" data-target="parties">＋ Party</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" id="sales"><h1>Sales</h1><p class="subtitle">Sales entry and invoices will be added in a future step.</p><div class="panel empty">Sales module is not connected yet.<br>These demo screens do not save accounting entries.</div></section>
+      <section class="page" id="purchases"><h1>Purchases</h1><p class="subtitle">Purchase bills and supplier entries.</p><div class="panel empty">Purchase module is not connected yet.</div></section>
+      <section class="page" id="inventory"><h1>Inventory</h1><p class="subtitle">Products, stock quantities and item rates.</p><div class="panel empty">Inventory module is not connected yet.</div></section>
+      <section class="page" id="parties"><h1>Customers & Suppliers</h1><p class="subtitle">Party profiles and balances.</p><div class="panel empty">Customer and supplier records are not connected yet.</div></section>
+      <section class="page" id="reports"><h1>Reports</h1><p class="subtitle">Business reports and financial summaries.</p><div class="panel empty">Reports will be added after the accounting modules.</div></section>
+      <section class="page" id="settings"><h1>Settings</h1><p class="subtitle">Company preferences and system configuration.</p><div class="panel empty">Settings module is not connected yet.</div></section>
+      <div class="footer">Pehnawa ERP · Frontend Demo · Do not use sample figures for business decisions.</div>
+    </div>
+  </main>
+</div>
+<script>
+const navButtons = document.querySelectorAll(".nav");
+function showPage(id) {
+  document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.id === id));
+  navButtons.forEach(b => b.classList.toggle("active", b.dataset.page === id));
+  const active = document.querySelector('.nav[data-page="' + id + '"]');
+  document.getElementById("crumb").textContent = active ? active.textContent.trim().replace(/^[▦↗↙▤♙▥⚙]+\s*/, "") : "Dashboard";
+  document.getElementById("sidebar").classList.remove("open");
+  window.scrollTo(0,0);
+}
+navButtons.forEach(b => b.addEventListener("click", () => showPage(b.dataset.page)));
+document.querySelectorAll(".quick").forEach(b => b.addEventListener("click", () => showPage(b.dataset.target)));
+document.getElementById("menuBtn").addEventListener("click", () => document.getElementById("sidebar").classList.toggle("open"));
+document.getElementById("allInvoices").addEventListener("click", () => showPage("sales"));
+document.getElementById("dateBtn").addEventListener("click", () => alert("This dashboard uses sample figures. Live date filtering will be added later."));
+document.getElementById("period").addEventListener("change", () => alert("Chart currently shows illustrative data only."));
+</script>
 </body>
-</html>
+                                                       </html>
+
