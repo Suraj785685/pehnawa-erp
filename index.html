@@ -5,7 +5,61 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pehnawa ERP | Dashboard</title>
-<style>
+<sty
+.product-form {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+  margin-top:20px;
+}
+.product-form label {
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  font-size:13px;
+  font-weight:600;
+  color:var(--text);
+}
+.product-form input,
+.product-form select,
+#productSearch {
+  width:100%;
+  min-width:0;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:white;
+  color:var(--text);
+  font:inherit;
+}
+.product-actions {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.product-actions button[type="button"] {
+  padding:12px 16px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:white;
+}
+#productRows td { vertical-align:middle; }
+.row-action {
+  padding:7px 9px;
+  margin:2px;
+  border:1px solid var(--line);
+  background:white;
+  border-radius:6px;
+}
+@media(max-width:800px) {
+  .product-form { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:480px) {
+  .product-form { grid-template-columns:1fr; }
+  .product-actions button { flex:1; }
+}
+  le>
 :root {
   --navy:#172554; --blue:#3157d5; --bg:#f4f7fc;
   --text:#172033; --muted:#748097; --line:#e8edf5;
@@ -203,7 +257,131 @@ th, td { padding:14px 12px; border-bottom:1px solid var(--line); }
 
       <section class="page" id="sales"><h1>Sales</h1><p class="subtitle">Sales entry and invoices will be added in a future step.</p><div class="panel empty">Sales module is not connected yet.<br>These demo screens do not save accounting entries.</div></section>
       <section class="page" id="purchases"><h1>Purchases</h1><p class="subtitle">Purchase bills and supplier entries.</p><div class="panel empty">Purchase module is not connected yet.</div></section>
-      <section class="page" id="inventory"><h1>Inventory</h1><p class="subtitle">Products, stock quantities and item rates.</p><div class="panel empty">Inventory module is not connected yet.</div></section>
+      
+<section class="page" id="inventory">
+  <div class="heading">
+    <div>
+      <h1>Clothing Product Master</h1>
+      <div class="subtitle">Manage garments, variants, barcodes and stock.</div>
+    </div>
+    <button class="primary" id="exportProducts">Export CSV</button>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <div class="card-label">Products / Variants</div>
+      <div class="metric" id="productCount">0</div>
+      <div class="trend neutral">Saved in this browser</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Total Stock Units</div>
+      <div class="metric" id="stockCount">0</div>
+      <div class="trend neutral">Current saved quantity</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Low Stock Variants</div>
+      <div class="metric" id="lowStockCount">0</div>
+      <div class="trend neutral">Stock at or below 5</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Stock Value</div>
+      <div class="metric" id="stockValue">₹0</div>
+      <div class="trend neutral">Quantity × purchase rate</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2 id="productFormTitle">Add New Product</h2>
+    <p class="panel-sub">Enter one size-colour-design combination per variant.</p>
+
+    <form id="productForm" class="product-form">
+      <input type="hidden" id="editId">
+      <label>Product Name *
+        <input id="pName" required maxlength="100" placeholder="e.g. Men's Cotton Shirt">
+      </label>
+      <label>SKU / Item Code *
+        <input id="pSku" required maxlength="50" placeholder="e.g. SHIRT-001-M">
+      </label>
+      <label>Barcode
+        <input id="pBarcode" maxlength="100" placeholder="Enter barcode number">
+      </label>
+      <label>Category
+        <select id="pCategory">
+          <option>Shirt</option>
+          <option>T-Shirt</option>
+          <option>Trousers</option>
+          <option>Jeans</option>
+          <option>Kurta</option>
+          <option>Dress</option>
+          <option>Other</option>
+        </select>
+      </label>
+      <label>Size *
+        <select id="pSize" required>
+          <option>S</option><option>M</option><option>L</option>
+          <option>XL</option><option>XXL</option><option>XXXL</option>
+          <option>Free Size</option><option>Other</option>
+        </select>
+      </label>
+      <label>Colour *
+        <input id="pColour" required maxlength="50" placeholder="e.g. Navy Blue">
+      </label>
+      <label>Design / Style No.
+        <input id="pDesign" maxlength="50" placeholder="e.g. D-102">
+      </label>
+      <label>Purchase Rate (₹) *
+        <input id="pPurchase" type="number" min="0" step="0.01" required placeholder="0.00">
+      </label>
+      <label>Selling Rate (₹) *
+        <input id="pSelling" type="number" min="0" step="0.01" required placeholder="0.00">
+      </label>
+      <label>GST Rate (%)
+        <select id="pGst">
+          <option value="0">0%</option>
+          <option value="5">5%</option>
+          <option value="12">12%</option>
+          <option value="18">18%</option>
+          <option value="28">28%</option>
+        </select>
+      </label>
+      <label>Opening Stock *
+        <input id="pStock" type="number" min="0" step="1" required value="0">
+      </label>
+      <label>Low Stock Alert At
+        <input id="pMinStock" type="number" min="0" step="1" value="5">
+      </label>
+      <div class="product-actions">
+        <button class="primary" type="submit" id="saveProduct">Save Product</button>
+        <button type="button" id="cancelEdit">Clear Form</button>
+      </div>
+    </form>
+    <p class="panel-sub">Barcode is stored as a number/text value. Scanner support can be added later.</p>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <div>
+        <h2>Product & Variant List</h2>
+        <div class="panel-sub">Search by name, SKU, colour, design or barcode.</div>
+      </div>
+    </div>
+    <input id="productSearch" placeholder="Search products..." aria-label="Search products">
+    <div class="table-wrap" style="margin-top:15px">
+      <table>
+        <thead>
+          <tr>
+            <th>Product</th><th>SKU</th><th>Barcode</th><th>Size</th>
+            <th>Colour</th><th>Design</th><th>Purchase ₹</th>
+            <th>Sale ₹</th><th>GST</th><th>Stock</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="productRows"></tbody>
+      </table>
+    </div>
+    <p id="productEmpty" class="empty">No products added yet. Use the form above to add your first product.</p>
+  </div>
+</section>
+
       <section class="page" id="parties"><h1>Customers & Suppliers</h1><p class="subtitle">Party profiles and balances.</p><div class="panel empty">Customer and supplier records are not connected yet.</div></section>
       <section class="page" id="reports"><h1>Reports</h1><p class="subtitle">Business reports and financial summaries.</p><div class="panel empty">Reports will be added after the accounting modules.</div></section>
       <section class="page" id="settings"><h1>Settings</h1><p class="subtitle">Company preferences and system configuration.</p><div class="panel empty">Settings module is not connected yet.</div></section>
@@ -211,7 +389,211 @@ th, td { padding:14px 12px; border-bottom:1px solid var(--line); }
     </div>
   </main>
 </div>
-<script>
+<scri
+const PRODUCT_KEY = "pehnawa_product_master_v1";
+let products = [];
+
+try {
+  products = JSON.parse(localStorage.getItem(PRODUCT_KEY) || "[]");
+  if (!Array.isArray(products)) products = [];
+} catch (e) {
+  products = [];
+}
+
+const byId = id => document.getElementById(id);
+const safe = value => String(value ?? "").replace(/[&<>"']/g, c => ({
+  "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+}[c]));
+const money = n => "₹" + Number(n || 0).toLocaleString("en-IN", {
+  maximumFractionDigits:2
+});
+
+function saveProducts() {
+  try {
+    localStorage.setItem(PRODUCT_KEY, JSON.stringify(products));
+    return true;
+  } catch (e) {
+    alert("Browser storage is full or unavailable. Product was not saved.");
+    return false;
+  }
+}
+
+function clearProductForm() {
+  byId("productForm").reset();
+  byId("editId").value = "";
+  byId("pStock").value = "0";
+  byId("pMinStock").value = "5";
+  byId("productFormTitle").textContent = "Add New Product";
+  byId("saveProduct").textContent = "Save Product";
+}
+
+function renderProducts() {
+  const q = byId("productSearch").value.trim().toLowerCase();
+  const filtered = products.filter(p =>
+    [p.name,p.sku,p.barcode,p.category,p.size,p.colour,p.design]
+      .some(v => String(v || "").toLowerCase().includes(q))
+  );
+
+  byId("productCount").textContent = products.length;
+  byId("stockCount").textContent =
+    products.reduce((sum,p) => sum + Number(p.stock),0);
+  byId("lowStockCount").textContent =
+    products.filter(p => Number(p.stock) <= Number(p.minStock)).length;
+  byId("stockValue").textContent = money(
+    products.reduce((sum,p) => sum + Number(p.stock)*Number(p.purchase),0)
+  );
+
+  byId("productRows").innerHTML = filtered.map(p => `
+    <tr>
+      <td>${safe(p.name)}</td>
+      <td>${safe(p.sku)}</td>
+      <td>${safe(p.barcode || "-")}</td>
+      <td>${safe(p.size)}</td>
+      <td>${safe(p.colour)}</td>
+      <td>${safe(p.design || "-")}</td>
+      <td>${money(p.purchase)}</td>
+      <td>${money(p.selling)}</td>
+      <td>${safe(p.gst)}%</td>
+      <td>${safe(p.stock)}</td>
+      <td>
+        <button class="row-action" data-edit="${safe(p.id)}">Edit</button>
+        <button class="row-action" data-delete="${safe(p.id)}">Delete</button>
+      </td>
+    </tr>
+  `).join("");
+
+  byId("productEmpty").style.display = filtered.length ? "none" : "block";
+}
+
+byId("productForm").addEventListener("submit", e => {
+  e.preventDefault();
+
+  const p = {
+    id: byId("editId").value || (
+      Date.now().toString(36) + Math.random().toString(36).slice(2,8)
+    ),
+    name: byId("pName").value.trim(),
+    sku: byId("pSku").value.trim(),
+    barcode: byId("pBarcode").value.trim(),
+    category: byId("pCategory").value,
+    size: byId("pSize").value,
+    colour: byId("pColour").value.trim(),
+    design: byId("pDesign").value.trim(),
+    purchase: Number(byId("pPurchase").value),
+    selling: Number(byId("pSelling").value),
+    gst: Number(byId("pGst").value),
+    stock: Number(byId("pStock").value),
+    minStock: Number(byId("pMinStock").value || 0)
+  };
+
+  if (!p.name || !p.sku || !p.colour) {
+    alert("Please fill in the required product fields.");
+    return;
+  }
+
+  if ([p.purchase,p.selling,p.stock,p.minStock,p.gst].some(n => !Number.isFinite(n) || n < 0)) {
+    alert("Rates, GST and stock must be valid non-negative numbers.");
+    return;
+  }
+
+  const editing = Boolean(byId("editId").value);
+  const duplicateSku = products.some(x =>
+    x.sku.toLowerCase() === p.sku.toLowerCase() && x.id !== p.id
+  );
+  if (duplicateSku) {
+    alert("This SKU already exists. Please use a unique SKU for each variant.");
+    return;
+  }
+
+  const duplicateBarcode = p.barcode && products.some(x =>
+    x.barcode === p.barcode && x.id !== p.id
+  );
+  if (duplicateBarcode) {
+    alert("This barcode already exists. Please use a unique barcode.");
+    return;
+  }
+
+  const previous = products;
+  products = editing
+    ? products.map(x => x.id === p.id ? p : x)
+    : [...products,p];
+
+  if (!saveProducts()) {
+    products = previous;
+    return;
+  }
+
+  clearProductForm();
+  renderProducts();
+  alert(editing ? "Product updated in this browser." : "Product saved in this browser.");
+});
+
+byId("productRows").addEventListener("click", e => {
+  const editId = e.target.dataset.edit;
+  const deleteId = e.target.dataset.delete;
+
+  if (editId) {
+    const p = products.find(x => x.id === editId);
+    if (!p) return;
+
+    byId("editId").value = p.id;
+    byId("pName").value = p.name;
+    byId("pSku").value = p.sku;
+    byId("pBarcode").value = p.barcode;
+    byId("pCategory").value = p.category;
+    byId("pSize").value = p.size;
+    byId("pColour").value = p.colour;
+    byId("pDesign").value = p.design;
+    byId("pPurchase").value = p.purchase;
+    byId("pSelling").value = p.selling;
+    byId("pGst").value = p.gst;
+    byId("pStock").value = p.stock;
+    byId("pMinStock").value = p.minStock;
+    byId("productFormTitle").textContent = "Edit Product";
+    byId("saveProduct").textContent = "Update Product";
+    byId("productFormTitle").scrollIntoView({behavior:"smooth"});
+  }
+
+  if (deleteId) {
+    const p = products.find(x => x.id === deleteId);
+    if (!p || !confirm("Delete " + p.name + " (" + p.sku + ")?")) return;
+
+    const previous = products;
+    products = products.filter(x => x.id !== deleteId);
+    if (!saveProducts()) {
+      products = previous;
+      return;
+    }
+    renderProducts();
+  }
+});
+
+byId("cancelEdit").addEventListener("click", clearProductForm);
+byId("productSearch").addEventListener("input", renderProducts);
+
+byId("exportProducts").addEventListener("click", () => {
+  const columns = [
+    "Product","SKU","Barcode","Category","Size","Colour","Design",
+    "Purchase Rate","Selling Rate","GST","Stock","Low Stock Alert"
+  ];
+  const values = products.map(p => [
+    p.name,p.sku,p.barcode,p.category,p.size,p.colour,p.design,
+    p.purchase,p.selling,p.gst,p.stock,p.minStock
+  ]);
+  const csvCell = v => '"' + String(v ?? "").replace(/"/g,'""') + '"';
+  const csv = [columns,...values].map(row => row.map(csvCell).join(",")).join("\r\n");
+  const url = URL.createObjectURL(new Blob(["\uFEFF" + csv], {
+    type:"text/csv;charset=utf-8;"
+  }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "pehnawa-products.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+renderProducts();
+      pt>
 const navButtons = document.querySelectorAll(".nav");
 function showPage(id) {
   document.querySelectorAll(".page").forEach(p => p.classList.toggle("active", p.id === id));
