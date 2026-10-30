@@ -390,7 +390,36 @@ th, td { padding:14px 12px; border-bottom:1px solid var(--line); }
   </div>
 </section>
 
-      <section class="page" id="parties"><h1>Customers & Suppliers</h1><p class="subtitle">Party profiles and balances.</p><div class="panel empty">Customer and supplier records are not connected yet.</div></section>
+      <section class="page" id="parties">
+  <div class="heading">
+    <div>
+      <h1>Supplier Master</h1>
+      <div class="subtitle">Manage your suppliers and balances.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Add New Supplier</h2>
+    <div class="form-grid">
+      <input id="supplierName" placeholder="Supplier Name">
+      <input id="supplierMobile" placeholder="Mobile Number">
+      <input id="supplierGSTIN" placeholder="GSTIN">
+      <input id="supplierState" placeholder="State">
+      <input id="supplierAddress" placeholder="Full Address">
+      <input id="supplierBalance" type="number" placeholder="Opening Balance">
+      <select id="supplierBalanceType">
+        <option value="Payable">Payable</option>
+        <option value="Advance">Advance</option>
+      </select>
+    </div>
+    <button class="primary" id="saveSupplier">Save Supplier</button>
+  </div>
+
+  <div class="panel">
+    <h2>Supplier List</h2>
+    <div id="supplierList">No suppliers added yet.</div>
+  </div>
+</section>
       <section class="page" id="reports"><h1>Reports</h1><p class="subtitle">Business reports and financial summaries.</p><div class="panel empty">Reports will be added after the accounting modules.</div></section>
       <section class="page" id="settings"><h1>Settings</h1><p class="subtitle">Company preferences and system configuration.</p><div class="panel empty">Settings module is not connected yet.</div></section>
       <div class="footer">Pehnawa ERP · Frontend Demo · Do not use sample figures for business decisions.</div>
@@ -616,6 +645,81 @@ document.getElementById("menuBtn").addEventListener("click", () => document.getE
 document.getElementById("allInvoices").addEventListener("click", () => showPage("sales"));
 document.getElementById("dateBtn").addEventListener("click", () => alert("This dashboard uses sample figures. Live date filtering will be added later."));
 document.getElementById("period").addEventListener("change", () => alert("Chart currently shows illustrative data only."));
+// SUPPLIER MASTER
+const SUPPLIER_KEY = "pehnawa_suppliers_v1";
+
+let suppliers = [];
+
+try {
+  suppliers = JSON.parse(localStorage.getItem(SUPPLIER_KEY) || "[]");
+  if (!Array.isArray(suppliers)) suppliers = [];
+} catch (e) {
+  suppliers = [];
+}
+
+function renderSuppliers() {
+  const list = document.getElementById("supplierList");
+
+  if (!list) return;
+
+  if (suppliers.length === 0) {
+    list.textContent = "No suppliers added yet.";
+    return;
+  }
+
+  list.innerHTML = suppliers.map((s, index) => `
+    <div class="panel" style="margin-top:12px">
+      <strong>${s.name}</strong>
+      <p>Mobile: ${s.mobile || "-"}</p>
+      <p>GSTIN: ${s.gstin || "-"}</p>
+      <p>State: ${s.state || "-"}</p>
+      <p>Address: ${s.address || "-"}</p>
+      <p>Opening Balance: ₹${s.balance} (${s.balanceType})</p>
+      <button class="secondary" onclick="deleteSupplier(${index})">Delete</button>
+    </div>
+  `).join("");
+}
+
+document.getElementById("saveSupplier").addEventListener("click", () => {
+  const name = document.getElementById("supplierName").value.trim();
+
+  if (!name) {
+    alert("Please enter Supplier Name");
+    return;
+  }
+
+  const supplier = {
+    name,
+    mobile: document.getElementById("supplierMobile").value.trim(),
+    gstin: document.getElementById("supplierGSTIN").value.trim(),
+    state: document.getElementById("supplierState").value.trim(),
+    address: document.getElementById("supplierAddress").value.trim(),
+    balance: Number(document.getElementById("supplierBalance").value || 0),
+    balanceType: document.getElementById("supplierBalanceType").value
+  };
+
+  suppliers.push(supplier);
+  localStorage.setItem(SUPPLIER_KEY, JSON.stringify(suppliers));
+
+  document.querySelectorAll("#parties input").forEach(input => {
+    input.value = "";
+  });
+
+  document.getElementById("supplierBalanceType").value = "Payable";
+
+  renderSuppliers();
+  alert("Supplier saved successfully!");
+});
+
+function deleteSupplier(index) {
+  if (!confirm("Delete this supplier?")) return;
+
+  suppliers.splice(index, 1);
+  localStorage.setItem(SUPPLIER_KEY, JSON.stringify(suppliers));
+  renderSuppliers();
+}
+
+renderSuppliers();
 </script>
 </body>
                                                        </html>
