@@ -275,8 +275,59 @@ th, td { padding:14px 12px; border-bottom:1px solid var(--line); }
       </section>
 
       <section class="page" id="sales"><h1>Sales</h1><p class="subtitle">Sales entry and invoices will be added in a future step.</p><div class="panel empty">Sales module is not connected yet.<br>These demo screens do not save accounting entries.</div></section>
-      <section class="page" id="purchases"><h1>Purchases</h1><p class="subtitle">Purchase bills and supplier entries.</p><div class="panel empty">Purchase module is not connected yet.</div></section>
-      
+      <section class="page" id="purchases">
+  <div class="heading">
+    <div>
+      <h1>Purchase Entry</h1>
+      <div class="subtitle">Record supplier purchase bills.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Bill Details</h2>
+    <div class="form-grid">
+      <select id="purchaseSupplier">
+        <option value="">Select Supplier</option>
+      </select>
+      <input id="purchaseBillNo" placeholder="Supplier Bill Number">
+      <input id="purchaseDate" type="date">
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Product Details</h2>
+    <div class="form-grid">
+      <select id="purchaseProduct">
+        <option value="">Select Product</option>
+      </select>
+      <input id="purchaseQty" type="number" placeholder="Quantity">
+      <input id="purchaseRate" type="number" placeholder="Purchase Rate">
+      <input id="purchaseGST" type="number" placeholder="GST %">
+    </div>
+    <button class="primary" id="addPurchaseItem">＋ Add Item</button>
+    <div id="purchaseItems" style="margin-top:15px">No items added.</div>
+  </div>
+
+  <div class="panel">
+    <h2>Payment Details</h2>
+    <div class="form-grid">
+      <input id="purchaseFreight" type="number" placeholder="Freight">
+      <input id="purchasePaid" type="number" placeholder="Amount Paid">
+      <select id="purchasePaymentStatus">
+        <option value="Unpaid">Unpaid</option>
+        <option value="Partial">Partial</option>
+        <option value="Paid">Paid</option>
+      </select>
+    </div>
+    <h2 id="purchaseGrandTotal">Grand Total: ₹0.00</h2>
+    <button class="primary" id="savePurchase">Save Purchase</button>
+  </div>
+
+  <div class="panel">
+    <h2>Purchase Register</h2>
+    <div id="purchaseList">No purchases recorded yet.</div>
+  </div>
+      </section>
 <section class="page" id="inventory">
   <div class="heading">
     <div>
