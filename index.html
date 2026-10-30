@@ -651,7 +651,19 @@ th, td { padding:14px 12px; border-bottom:1px solid var(--line); }
   </main>
 </div>
 <script>
-  alert("ERP Script Started");window.onerror = function(message, source, line, column) {
+const CUSTOMER_KEY = "pehnawa_customers_v1";
+let customers = [];
+
+try {
+  customers = JSON.parse(localStorage.getItem(CUSTOMER_KEY) || "[]");
+  if (!Array.isArray(customers)) customers = [];
+} catch (e) {
+  customers = [];
+}
+
+alert("ERP Script Started");
+
+window.onerror = function(message, source, line, column) {
   alert("JavaScript Error: " + message + " | Line: " + line);
 };
 const PRODUCT_KEY = "pehnawa_product_master_v1";
@@ -1378,16 +1390,6 @@ renderSalesCart();
 renderSalesList();
 alert("Customer Section Reached");
   // CUSTOMER MASTER
-const CUSTOMER_KEY = "pehnawa_customers_v1";
-let customers = [];
-
-try {
-  customers = JSON.parse(localStorage.getItem(CUSTOMER_KEY) || "[]");
-  if (!Array.isArray(customers)) customers = [];
-} catch (e) {
-  customers = [];
-}
-
 function renderCustomers() {
   const list = document.getElementById("customerList");
   if (!list) return;
