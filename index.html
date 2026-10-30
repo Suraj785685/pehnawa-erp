@@ -570,6 +570,36 @@ th, td { padding:14px 12px; border-bottom:1px solid var(--line); }
     <div id="supplierList">No suppliers added yet.</div>
   </div>
 </section>
+      <section class="page" id="customers">
+  <div class="heading">
+    <div>
+      <h1>Customer Master</h1>
+      <div class="subtitle">Manage your customers and balances.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Add New Customer</h2>
+    <div class="form-grid">
+      <input id="customerName" placeholder="Customer Name">
+      <input id="customerMobile" placeholder="Mobile Number">
+      <input id="customerGSTIN" placeholder="GSTIN">
+      <input id="customerState" placeholder="State">
+      <input id="customerAddress" placeholder="Full Address">
+      <input id="customerBalance" type="number" placeholder="Opening Balance">
+      <select id="customerBalanceType">
+        <option value="Receivable">Receivable</option>
+        <option value="Advance">Advance</option>
+      </select>
+    </div>
+    <button class="primary" id="saveCustomer">Save Customer</button>
+  </div>
+
+  <div class="panel">
+    <h2>Customer List</h2>
+    <div id="customerList">No customers added yet.</div>
+  </div>
+      </section>
       <section class="page" id="reports"><h1>Reports</h1><p class="subtitle">Business reports and financial summaries.</p><div class="panel empty">Reports will be added after the accounting modules.</div></section>
       <section class="page" id="settings"><h1>Settings</h1><p class="subtitle">Company preferences and system configuration.</p><div class="panel empty">Settings module is not connected yet.</div></section>
       <div class="footer">Pehnawa ERP · Frontend Demo · Do not use sample figures for business decisions.</div>
