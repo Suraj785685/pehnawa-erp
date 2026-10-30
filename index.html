@@ -1210,7 +1210,20 @@ function removeSalesItem(index) {
   salesCart.splice(index, 1);
   renderSalesCart();
 }
+document.getElementById("salesCustomer").addEventListener("change", () => {
+  const index = document.getElementById("salesCustomer").value;
 
+  if (index === "") {
+    document.getElementById("salesMobile").value = "";
+    return;
+  }
+
+  const customer = customers[Number(index)];
+
+  if (customer) {
+    document.getElementById("salesMobile").value = customer.mobile || "";
+  }
+});
 document.getElementById("salesProduct").addEventListener("change", () => {
   const id = document.getElementById("salesProduct").value;
   const p = products.find(x => x.id === id);
