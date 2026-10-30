@@ -1155,7 +1155,9 @@ try {
 
 function loadSalesProducts() {
   const select = document.getElementById("salesProduct");
-  if (!select) return;
+  const customerSelect = document.getElementById("salesCustomer");
+
+  if (!select || !customerSelect) return;
 
   select.innerHTML = '<option value="">Select Product</option>';
 
@@ -1164,6 +1166,15 @@ function loadSalesProducts() {
     option.value = p.id;
     option.textContent = p.name + " - " + p.sku;
     select.appendChild(option);
+  });
+
+  customerSelect.innerHTML = '<option value="">Select Customer</option>';
+
+  customers.forEach((c, i) => {
+    const option = document.createElement("option");
+    option.value = i;
+    option.textContent = c.name;
+    customerSelect.appendChild(option);
   });
 }
 
