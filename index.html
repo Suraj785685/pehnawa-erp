@@ -651,7 +651,9 @@ th, td { padding:14px 12px; border-bottom:1px solid var(--line); }
   </main>
 </div>
 <script>
-  alert("ERP Script Started");
+  alert("ERP Script Started");window.onerror = function(message, source, line, column) {
+  alert("JavaScript Error: " + message + " | Line: " + line);
+};
 const PRODUCT_KEY = "pehnawa_product_master_v1";
 let products = [];
 
