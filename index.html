@@ -1118,7 +1118,7 @@ document.getElementById("salesProduct").addEventListener("change", () => {
   const p = products.find(x => x.id === id);
 
   if (p) {
-    document.getElementById("salesRate").value = p.sale;
+    document.getElementById("salesRate").value = p.selling;
     document.getElementById("salesGST").value = p.gst;
   }
 });
