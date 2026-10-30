@@ -1054,6 +1054,214 @@ document.getElementById("savePurchase").addEventListener("click", () => {
 loadPurchaseOptions();
 renderPurchaseCart();
 renderPurchaseList();
+// SALES MANAGEMENT
+const SALES_KEY = "pehnawa_sales_v1";
+let sales = [];
+let salesCart = [];
+
+try {
+  sales = JSON.parse(localStorage.getItem(SALES_KEY) || "[]");
+  if (!Array.isArray(sales)) sales = [];
+} catch (e) {
+  sales = [];
+}
+
+function loadSalesProducts() {
+  const select = document.getElementById("salesProduct");
+  if (!select) return;
+
+  select.innerHTML = '<option value="">Select Product</option>';
+
+  products.forEach(p => {
+    const option = document.createElement("option");
+    option.value = p.id;
+    option.textContent = p.name + " - " + p.sku;
+    select.appendChild(option);
+  });
+}
+
+function renderSalesCart() {
+  const box = document.getElementById("salesItems");
+
+  if (!salesCart.length) {
+    box.textContent = "No items added.";
+  } else {
+    box.innerHTML = salesCart.map((item, i) => `
+      <div class="panel" style="margin-top:10px">
+        <strong>${item.name}</strong>
+        <p>Qty: ${item.qty} | Rate: ₹${item.rate}</p>
+        <p>GST: ${item.gst}% | Amount: ₹${item.total.toFixed(2)}</p>
+        <button class="secondary" onclick="removeSalesItem(${i})">Remove</button>
+      </div>
+    `).join("");
+  }
+
+  updateSalesTotal();
+}
+
+function updateSalesTotal() {
+  const subtotal = salesCart.reduce((sum, item) => sum + item.total, 0);
+  const discount = Number(document.getElementById("salesDiscount").value || 0);
+  const total = Math.max(0, subtotal - discount);
+
+  document.getElementById("salesGrandTotal").textContent =
+    "Grand Total: ₹" + total.toFixed(2);
+}
+
+function removeSalesItem(index) {
+  salesCart.splice(index, 1);
+  renderSalesCart();
+}
+
+document.getElementById("salesProduct").addEventListener("change", () => {
+  const id = document.getElementById("salesProduct").value;
+  const p = products.find(x => x.id === id);
+
+  if (p) {
+    document.getElementById("salesRate").value = p.sale;
+    document.getElementById("salesGST").value = p.gst;
+  }
+});
+
+document.getElementById("addSalesItem").addEventListener("click", () => {
+  const id = document.getElementById("salesProduct").value;
+  const p = products.find(x => x.id === id);
+  const qty = Number(document.getElementById("salesQty").value);
+  const rate = Number(document.getElementById("salesRate").value);
+  const gst = Number(document.getElementById("salesGST").value);
+
+  if (!p || !Number.isFinite(qty) || qty <= 0 ||
+      !Number.isFinite(rate) || rate < 0 ||
+      !Number.isFinite(gst) || gst < 0) {
+    alert("Please select product and enter valid details.");
+    return;
+  }
+
+  if (qty > Number(p.stock)) {
+    alert("Not enough stock available. Available stock: " + p.stock);
+    return;
+  }
+
+  const taxable = qty * rate;
+  const total = taxable + taxable * gst / 100;
+
+  salesCart.push({
+    productId: p.id,
+    name: p.name,
+    qty,
+    rate,
+    gst,
+    total
+  });
+
+  document.getElementById("salesQty").value = "";
+  renderSalesCart();
+});
+
+document.getElementById("salesDiscount").addEventListener("input", updateSalesTotal);
+
+function renderSalesList() {
+  const box = document.getElementById("salesList");
+
+  if (!sales.length) {
+    box.textContent = "No sales recorded yet.";
+    return;
+  }
+
+  box.innerHTML = sales.map(s => `
+    <div class="panel" style="margin-top:10px">
+      <strong>${s.invoiceNo}</strong>
+      <p>Customer: ${s.customer}</p>
+      <p>Date: ${s.date}</p>
+      <p>Total: ₹${s.total.toFixed(2)}</p>
+      <p>Received: ₹${s.paid.toFixed(2)} | ${s.status}</p>
+    </div>
+  `).join("");
+}
+
+document.getElementById("saveSales").addEventListener("click", () => {
+  const customer = document.getElementById("salesCustomer").value.trim();
+  const invoiceNo = document.getElementById("salesInvoiceNo").value.trim();
+  const date = document.getElementById("salesDate").value;
+  const mobile = document.getElementById("salesMobile").value.trim();
+
+  if (!customer || !invoiceNo || !date || !salesCart.length) {
+    alert("Enter customer, invoice number, date and at least one item.");
+    return;
+  }
+
+  if (sales.some(s => s.invoiceNo === invoiceNo)) {
+    alert("This invoice number already exists.");
+    return;
+  }
+
+  const subtotal = salesCart.reduce((sum, item) => sum + item.total, 0);
+  const discount = Number(document.getElementById("salesDiscount").value || 0);
+  const total = subtotal - discount;
+  const paid = Number(document.getElementById("salesPaid").value || 0);
+
+  if (!Number.isFinite(discount) || discount < 0 || discount > subtotal ||
+      !Number.isFinite(paid) || paid < 0 || paid > total) {
+    alert("Please enter valid discount and received amount.");
+    return;
+  }
+
+  for (const item of salesCart) {
+    const p = products.find(x => x.id === item.productId);
+    if (!p || Number(p.stock) < item.qty) {
+      alert("Stock changed. Please check product quantity again.");
+      return;
+    }
+  }
+
+  const previousProducts = products.map(p => ({...p}));
+
+  salesCart.forEach(item => {
+    const p = products.find(x => x.id === item.productId);
+    p.stock = Number(p.stock) - item.qty;
+  });
+
+  if (!saveProducts()) {
+    products = previousProducts;
+    return;
+  }
+
+  const sale = {
+    customer,
+    mobile,
+    invoiceNo,
+    date,
+    items: [...salesCart],
+    subtotal,
+    discount,
+    total,
+    paid,
+    status: paid === 0 ? "Unpaid" : paid >= total ? "Paid" : "Partial"
+  };
+
+  sales.push(sale);
+  localStorage.setItem(SALES_KEY, JSON.stringify(sales));
+
+  renderProducts();
+  renderSalesList();
+
+  salesCart = [];
+  renderSalesCart();
+
+  document.getElementById("salesCustomer").value = "";
+  document.getElementById("salesInvoiceNo").value = "";
+  document.getElementById("salesDate").value = "";
+  document.getElementById("salesMobile").value = "";
+  document.getElementById("salesDiscount").value = "";
+  document.getElementById("salesPaid").value = "";
+  document.getElementById("salesProduct").value = "";
+
+  alert("Sales invoice saved and stock updated successfully!");
+});
+
+loadSalesProducts();
+renderSalesCart();
+renderSalesList();
 </script>
 </body>
                                                        </html>
