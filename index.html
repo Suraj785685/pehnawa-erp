@@ -298,7 +298,58 @@ th, td { padding:14px 12px; border-bottom:1px solid var(--line); }
         </div>
       </section>
 
-      <section class="page" id="sales"><h1>Sales</h1><p class="subtitle">Sales entry and invoices will be added in a future step.</p><div class="panel empty">Sales module is not connected yet.<br>These demo screens do not save accounting entries.</div></section>
+      <section class="page" id="sales">
+  <div class="heading">
+    <div>
+      <h1>Sales Invoice</h1>
+      <div class="subtitle">Create customer sales bills.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Invoice Details</h2>
+    <div class="form-grid">
+      <input id="salesCustomer" placeholder="Customer Name">
+      <input id="salesInvoiceNo" placeholder="Invoice Number">
+      <input id="salesDate" type="date">
+      <input id="salesMobile" placeholder="Mobile Number">
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Product Details</h2>
+    <div class="form-grid">
+      <select id="salesProduct">
+        <option value="">Select Product</option>
+      </select>
+      <input id="salesQty" type="number" placeholder="Quantity">
+      <input id="salesRate" type="number" placeholder="Sale Rate">
+      <input id="salesGST" type="number" placeholder="GST %">
+    </div>
+    <button class="primary" id="addSalesItem">＋ Add Item</button>
+    <div id="salesItems">No items added.</div>
+  </div>
+
+  <div class="panel">
+    <h2>Payment Details</h2>
+    <div class="form-grid">
+      <input id="salesDiscount" type="number" placeholder="Discount">
+      <input id="salesPaid" type="number" placeholder="Amount Received">
+      <select id="salesPayment">
+        <option value="Unpaid">Unpaid</option>
+        <option value="Partial">Partial</option>
+        <option value="Paid">Paid</option>
+      </select>
+    </div>
+    <h2 id="salesGrandTotal">Grand Total: ₹0.00</h2>
+    <button class="primary" id="saveSales">Save Invoice</button>
+  </div>
+
+  <div class="panel">
+    <h2>Sales Register</h2>
+    <div id="salesList">No sales recorded yet.</div>
+  </div>
+      </section>
       <section class="page" id="purchases">
   <div class="heading">
     <div>
