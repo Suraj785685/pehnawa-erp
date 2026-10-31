@@ -2207,6 +2207,64 @@ document.getElementById("saveExpense").addEventListener("click", () => {
 });
 
 renderExpenses();
+// PROFIT & LOSS REPORT MODULE
+
+function generateProfitLoss() {
+  const startDate = document.getElementById("plStartDate").value;
+  const endDate = document.getElementById("plEndDate").value;
+  const result = document.getElementById("profitLossResult");
+
+  if (!startDate || !endDate || startDate > endDate) {
+    alert("Please select a valid date range.");
+    return;
+  }
+
+  const periodSales = sales.filter(
+    s => s.date >= startDate && s.date <= endDate
+  );
+
+  const periodPurchases = purchases.filter(
+    p => p.date >= startDate && p.date <= endDate
+  );
+
+  const periodExpenses = expenses.filter(
+    e => e.date >= startDate && e.date <= endDate
+  );
+
+  const totalSales = periodSales.reduce(
+    (sum, s) => sum + Number(s.total || 0), 0
+  );
+
+  const totalPurchases = periodPurchases.reduce(
+    (sum, p) => sum + Number(p.total || 0), 0
+  );
+
+  const totalExpenses = periodExpenses.reduce(
+    (sum, e) => sum + Number(e.amount || 0), 0
+  );
+
+  const difference = totalSales - totalPurchases;
+  const estimatedNet = difference - totalExpenses;
+
+  result.innerHTML = `
+    <h2>Profit & Loss Summary</h2>
+    <p>Period: ${startDate} to ${endDate}</p>
+    <hr>
+    <p>Total Sales: ₹${totalSales.toFixed(2)}</p>
+    <p>Total Purchases: ₹${totalPurchases.toFixed(2)}</p>
+    <p>Sales - Purchases: ₹${difference.toFixed(2)}</p>
+    <p>Total Expenses: ₹${totalExpenses.toFixed(2)}</p>
+    <hr>
+    <h3>Estimated Result: ₹${estimatedNet.toFixed(2)}
+    (${estimatedNet >= 0 ? "Surplus" : "Deficit"})</h3>
+    <p><small>Note: This is a basic estimate, not a formal accounting profit. Actual profit requires cost of goods sold and stock valuation.</small></p>
+  `;
+}
+
+document.getElementById("viewProfitLoss").addEventListener(
+  "click",
+  generateProfitLoss
+);
 </script>
 </body>
                                                        </html>
