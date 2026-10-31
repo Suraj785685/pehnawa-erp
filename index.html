@@ -1474,6 +1474,87 @@ function deleteCustomer(index) {
 }
 
 renderCustomers();
+// CUSTOMER LEDGER
+
+function loadLedgerCustomers() {
+  const select = document.getElementById("ledgerCustomer");
+  if (!select) return;
+
+  select.innerHTML = '<option value="">Select Customer</option>';
+
+  customers.forEach((c, index) => {
+    const option = document.createElement("option");
+    option.value = index;
+    option.textContent = c.name;
+    select.appendChild(option);
+  });
+}
+
+document.getElementById("viewLedger").addEventListener("click", () => {
+  const index = document.getElementById("ledgerCustomer").value;
+  const result = document.getElementById("ledgerResult");
+
+  if (index === "") {
+    alert("Please select a customer.");
+    return;
+  }
+
+  const customer = customers[Number(index)];
+
+  if (!customer) {
+    alert("Customer not found.");
+    return;
+  }
+
+  const customerSales = sales.filter(s =>
+    String(s.customer) === String(index) ||
+    s.customer === customer.name
+  );
+
+  const totalSales = customerSales.reduce(
+    (sum, s) => sum + Number(s.total || 0), 0
+  );
+
+  const totalReceived = customerSales.reduce(
+    (sum, s) => sum + Number(s.paid || 0), 0
+  );
+
+  const pending = totalSales - totalReceived;
+
+  const opening = Number(customer.balance || 0);
+  const openingReceivable =
+    customer.balanceType === "Receivable" ? opening : -opening;
+
+  const closingBalance = openingReceivable + pending;
+
+  result.innerHTML = `
+    <h2>${customer.name}</h2>
+    <p>Mobile: ${customer.mobile || "-"}</p>
+    <p>Opening Balance: ₹${opening.toFixed(2)} (${customer.balanceType})</p>
+    <p>Total Sales: ₹${totalSales.toFixed(2)}</p>
+    <p>Payment Received: ₹${totalReceived.toFixed(2)}</p>
+    <p>Pending Sales: ₹${pending.toFixed(2)}</p>
+    <h3>Closing Balance: ₹${Math.abs(closingBalance).toFixed(2)}
+    (${closingBalance >= 0 ? "Receivable" : "Advance"})</h3>
+
+    <h3>Invoice History</h3>
+    ${
+      customerSales.length
+      ? customerSales.map(s => `
+        <div class="panel">
+          <strong>Invoice: ${s.invoiceNo}</strong>
+          <p>Date: ${s.date}</p>
+          <p>Total: ₹${Number(s.total).toFixed(2)}</p>
+          <p>Received: ₹${Number(s.paid).toFixed(2)}</p>
+          <p>Status: ${s.status}</p>
+        </div>
+      `).join("")
+      : "<p>No sales invoices found.</p>"
+    }
+  `;
+});
+
+loadLedgerCustomers();
 </script>
 </body>
                                                        </html>
