@@ -634,6 +634,27 @@ th, td { padding:14px 12px; border-bottom:1px solid var(--line); }
     <div id="expenseList">No expenses recorded yet.</div>
   </div>
       </section>
+      <section class="page" id="profitLoss">
+  <div class="heading">
+    <div>
+      <h1>Profit & Loss Report</h1>
+      <div class="subtitle">Business income and expense summary.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Select Period</h2>
+    <div class="form-grid">
+      <input type="date" id="plStartDate">
+      <input type="date" id="plEndDate">
+    </div>
+    <button class="primary" id="viewProfitLoss">Generate Report</button>
+  </div>
+
+  <div id="profitLossResult" class="panel">
+    Select dates and generate your report.
+  </div>
+      </section>
 <section class="page" id="inventory">
   <div class="heading">
     <div>
