@@ -595,6 +595,32 @@ th, td { padding:14px 12px; border-bottom:1px solid var(--line); }
     Please select a date.
   </div>
       </section>
+      <section class="page" id="expenses">
+  <div class="heading">
+    <div>
+      <h1>Expense Management</h1>
+      <div class="subtitle">Record and manage daily business expenses.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Add New Expense</h2>
+    <div class="form-grid">
+      <input type="date" id="expenseDate">
+      <input type="text" id="expenseCategory" placeholder="Expense Category">
+      <input type="number" id="expenseAmount" min="0.01" step="0.01" placeholder="Amount">
+      <input type="text" id="expenseMode" placeholder="Payment Mode (Cash/UPI/Bank)">
+      <input type="text" id="expenseReference" placeholder="Reference">
+      <input type="text" id="expenseNote" placeholder="Notes">
+    </div>
+    <button class="primary" id="saveExpense">Save Expense</button>
+  </div>
+
+  <div class="panel">
+    <h2>Expense History</h2>
+    <div id="expenseList">No expenses recorded yet.</div>
+  </div>
+      </section>
 <section class="page" id="inventory">
   <div class="heading">
     <div>
