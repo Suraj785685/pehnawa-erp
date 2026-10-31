@@ -2012,6 +2012,60 @@ document.getElementById("viewSupplierLedger").addEventListener(
 );
 
 loadSupplierLedgerList();
+// DAY BOOK MODULE
+
+function renderDayBook() {
+  const date = document.getElementById("dayBookDate").value;
+  const result = document.getElementById("dayBookResult");
+
+  if (!date) {
+    alert("Please select a date.");
+    return;
+  }
+
+  const daySales = sales.filter(s => s.date === date);
+  const dayPurchases = purchases.filter(p => p.date === date);
+  const dayReceipts = receipts.filter(r => r.date === date);
+  const dayPayments = supplierPayments.filter(p => p.date === date);
+
+  const totalSales = daySales.reduce((sum, s) => sum + Number(s.total || 0), 0);
+  const totalPurchases = dayPurchases.reduce((sum, p) => sum + Number(p.total || 0), 0);
+  const totalReceipts = dayReceipts.reduce((sum, r) => sum + Number(r.amount || 0), 0);
+  const totalPayments = dayPayments.reduce((sum, p) => sum + Number(p.amount || 0), 0);
+
+  result.innerHTML = `
+    <h2>Day Book: ${date}</h2>
+
+    <p>Sales: ₹${totalSales.toFixed(2)}</p>
+    <p>Purchase: ₹${totalPurchases.toFixed(2)}</p>
+    <p>Customer Receipts: ₹${totalReceipts.toFixed(2)}</p>
+    <p>Supplier Payments: ₹${totalPayments.toFixed(2)}</p>
+
+    <hr>
+
+    <h3>Sales Entries</h3>
+    ${daySales.length ? daySales.map(s => `
+      <p>Invoice: ${s.invoiceNo || "-"} | ₹${Number(s.total || 0).toFixed(2)}</p>
+    `).join("") : "<p>No sales.</p>"}
+
+    <h3>Purchase Entries</h3>
+    ${dayPurchases.length ? dayPurchases.map(p => `
+      <p>Bill: ${p.billNo || "-"} | ${p.supplier || "-"} | ₹${Number(p.total || 0).toFixed(2)}</p>
+    `).join("") : "<p>No purchases.</p>"}
+
+    <h3>Customer Receipts</h3>
+    ${dayReceipts.length ? dayReceipts.map(r => `
+      <p>${r.customerName} | ₹${Number(r.amount || 0).toFixed(2)}</p>
+    `).join("") : "<p>No receipts.</p>"}
+
+    <h3>Supplier Payments</h3>
+    ${dayPayments.length ? dayPayments.map(p => `
+      <p>${p.supplierName} | ₹${Number(p.amount || 0).toFixed(2)}</p>
+    `).join("") : "<p>No supplier payments.</p>"}
+  `;
+}
+
+document.getElementById("viewDayBook").addEventListener("click", renderDayBook);
 </script>
 </body>
                                                        </html>
