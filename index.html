@@ -1597,6 +1597,97 @@ document.getElementById("viewLedger").addEventListener("click", () => {
 });
 
 loadLedgerCustomers();
+// PAYMENT RECEIPT MODULE
+
+const RECEIPT_KEY = "pehnawa_receipts_v1";
+let receipts = [];
+
+try {
+  receipts = JSON.parse(localStorage.getItem(RECEIPT_KEY) || "[]");
+  if (!Array.isArray(receipts)) receipts = [];
+} catch (e) {
+  receipts = [];
+}
+
+function loadReceiptCustomers() {
+  const select = document.getElementById("receiptCustomer");
+  if (!select) return;
+
+  select.innerHTML = '<option value="">Select Customer</option>';
+
+  customers.forEach((c, index) => {
+    const option = document.createElement("option");
+    option.value = index;
+    option.textContent = c.name;
+    select.appendChild(option);
+  });
+}
+
+function renderReceipts() {
+  const list = document.getElementById("receiptList");
+  if (!list) return;
+
+  if (!receipts.length) {
+    list.textContent = "No receipts recorded yet.";
+    return;
+  }
+
+  list.innerHTML = receipts.map(r => `
+    <div class="panel">
+      <strong>${r.customerName}</strong>
+      <p>Date: ${r.date}</p>
+      <p>Amount: ₹${Number(r.amount).toFixed(2)}</p>
+      <p>Mode: ${r.mode || "-"}</p>
+      <p>Reference: ${r.reference || "-"}</p>
+      <p>Notes: ${r.note || "-"}</p>
+    </div>
+  `).join("");
+}
+
+document.getElementById("saveReceipt").addEventListener("click", () => {
+  const index = document.getElementById("receiptCustomer").value;
+  const date = document.getElementById("receiptDate").value;
+  const amount = Number(document.getElementById("receiptAmount").value);
+
+  if (index === "" || !date || !Number.isFinite(amount) || amount <= 0) {
+    alert("Please select customer, date and valid amount.");
+    return;
+  }
+
+  const customer = customers[Number(index)];
+
+  if (!customer) {
+    alert("Customer not found.");
+    return;
+  }
+
+  const receipt = {
+    customerIndex: Number(index),
+    customerName: customer.name,
+    date,
+    amount,
+    mode: document.getElementById("receiptMode").value.trim(),
+    reference: document.getElementById("receiptReference").value.trim(),
+    note: document.getElementById("receiptNote").value.trim()
+  };
+
+  receipts.push(receipt);
+  localStorage.setItem(RECEIPT_KEY, JSON.stringify(receipts));
+
+  renderReceipts();
+
+  document.getElementById("receiptCustomer").value = "";
+  document.getElementById("receiptDate").value = "";
+  document.getElementById("receiptAmount").value = "";
+  document.getElementById("receiptMode").value = "";
+  document.getElementById("receiptReference").value = "";
+  document.getElementById("receiptNote").value = "";
+
+  alert("Payment receipt saved successfully!");
+});
+
+loadReceiptCustomers();
+renderReceipts();
 </script>
 </body>
                                                        </html>
