@@ -487,6 +487,37 @@ th, td { padding:14px 12px; border-bottom:1px solid var(--line); }
     <div id="purchaseList">No purchases recorded yet.</div>
   </div>
       </section>
+      <section class="page" id="supplierPayment">
+  <div class="heading">
+    <div>
+      <h1>Supplier Payment</h1>
+      <div class="subtitle">Record payments made to suppliers.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Make Supplier Payment</h2>
+
+    <div class="form-grid">
+      <select id="supplierPaymentParty">
+        <option value="">Select Supplier</option>
+      </select>
+
+      <input id="supplierPaymentDate" type="date">
+      <input id="supplierPaymentAmount" type="number" min="0.01" step="0.01" placeholder="Payment Amount">
+      <input id="supplierPaymentMode" placeholder="Payment Mode (Cash/UPI/Bank)">
+      <input id="supplierPaymentReference" placeholder="Transaction Reference">
+      <input id="supplierPaymentNote" placeholder="Notes">
+    </div>
+
+    <button class="primary" id="saveSupplierPayment">Save Payment</button>
+  </div>
+
+  <div class="panel">
+    <h2>Supplier Payment History</h2>
+    <div id="supplierPaymentList">No payments recorded yet.</div>
+  </div>
+      </section>
 <section class="page" id="inventory">
   <div class="heading">
     <div>
