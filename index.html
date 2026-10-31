@@ -2105,6 +2105,74 @@ function renderDayBook() {
 }
 
 document.getElementById("viewDayBook").addEventListener("click", renderDayBook);
+// EXPENSE MANAGEMENT MODULE
+
+const EXPENSE_KEY = "suraj_erp_expenses_v1";
+let expenses = [];
+
+try {
+  expenses = JSON.parse(localStorage.getItem(EXPENSE_KEY) || "[]");
+  if (!Array.isArray(expenses)) expenses = [];
+} catch (e) {
+  expenses = [];
+}
+
+function renderExpenses() {
+  const list = document.getElementById("expenseList");
+  if (!list) return;
+
+  if (!expenses.length) {
+    list.textContent = "No expenses recorded yet.";
+    return;
+  }
+
+  list.innerHTML = expenses.map(e => `
+    <div class="panel">
+      <strong>${e.category}</strong>
+      <p>Date: ${e.date}</p>
+      <p>Amount: ₹${Number(e.amount).toFixed(2)}</p>
+      <p>Mode: ${e.mode || "-"}</p>
+      <p>Reference: ${e.reference || "-"}</p>
+      <p>Notes: ${e.note || "-"}</p>
+    </div>
+  `).join("");
+}
+
+document.getElementById("saveExpense").addEventListener("click", () => {
+  const date = document.getElementById("expenseDate").value;
+  const category = document.getElementById("expenseCategory").value.trim();
+  const amount = Number(document.getElementById("expenseAmount").value);
+
+  if (!date || !category || !Number.isFinite(amount) || amount <= 0) {
+    alert("Please enter date, category and valid amount.");
+    return;
+  }
+
+  const expense = {
+    date,
+    category,
+    amount,
+    mode: document.getElementById("expenseMode").value.trim(),
+    reference: document.getElementById("expenseReference").value.trim(),
+    note: document.getElementById("expenseNote").value.trim()
+  };
+
+  expenses.push(expense);
+  localStorage.setItem(EXPENSE_KEY, JSON.stringify(expenses));
+
+  renderExpenses();
+
+  document.getElementById("expenseDate").value = "";
+  document.getElementById("expenseCategory").value = "";
+  document.getElementById("expenseAmount").value = "";
+  document.getElementById("expenseMode").value = "";
+  document.getElementById("expenseReference").value = "";
+  document.getElementById("expenseNote").value = "";
+
+  alert("Expense saved successfully!");
+});
+
+renderExpenses();
 </script>
 </body>
                                                        </html>
