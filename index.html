@@ -1741,6 +1741,104 @@ document.getElementById("saveReceipt").addEventListener("click", () => {
 
 loadReceiptCustomers();
 renderReceipts();
+// SUPPLIER PAYMENT MODULE
+
+const SUPPLIER_PAYMENT_KEY = "pehnawa_supplier_payments_v1";
+let supplierPayments = [];
+
+try {
+  supplierPayments = JSON.parse(
+    localStorage.getItem(SUPPLIER_PAYMENT_KEY) || "[]"
+  );
+  if (!Array.isArray(supplierPayments)) supplierPayments = [];
+} catch (e) {
+  supplierPayments = [];
+}
+
+function loadPaymentSuppliers() {
+  const select = document.getElementById("supplierPaymentParty");
+  if (!select) return;
+
+  select.innerHTML = '<option value="">Select Supplier</option>';
+
+  suppliers.forEach((s, index) => {
+    const option = document.createElement("option");
+    option.value = index;
+    option.textContent = s.name;
+    select.appendChild(option);
+  });
+}
+
+function renderSupplierPayments() {
+  const list = document.getElementById("supplierPaymentList");
+  if (!list) return;
+
+  if (!supplierPayments.length) {
+    list.textContent = "No payments recorded yet.";
+    return;
+  }
+
+  list.innerHTML = supplierPayments.map(p => `
+    <div class="panel">
+      <strong>${p.supplierName}</strong>
+      <p>Date: ${p.date}</p>
+      <p>Amount: ₹${Number(p.amount).toFixed(2)}</p>
+      <p>Mode: ${p.mode || "-"}</p>
+      <p>Reference: ${p.reference || "-"}</p>
+      <p>Notes: ${p.note || "-"}</p>
+    </div>
+  `).join("");
+}
+
+document.getElementById("saveSupplierPayment").addEventListener("click", () => {
+  const index = document.getElementById("supplierPaymentParty").value;
+  const date = document.getElementById("supplierPaymentDate").value;
+  const amount = Number(
+    document.getElementById("supplierPaymentAmount").value
+  );
+
+  if (index === "" || !date || !Number.isFinite(amount) || amount <= 0) {
+    alert("Please select supplier, date and valid amount.");
+    return;
+  }
+
+  const supplier = suppliers[Number(index)];
+
+  if (!supplier) {
+    alert("Supplier not found.");
+    return;
+  }
+
+  const payment = {
+    supplierIndex: Number(index),
+    supplierName: supplier.name,
+    date,
+    amount,
+    mode: document.getElementById("supplierPaymentMode").value.trim(),
+    reference: document.getElementById("supplierPaymentReference").value.trim(),
+    note: document.getElementById("supplierPaymentNote").value.trim()
+  };
+
+  supplierPayments.push(payment);
+  localStorage.setItem(
+    SUPPLIER_PAYMENT_KEY,
+    JSON.stringify(supplierPayments)
+  );
+
+  renderSupplierPayments();
+
+  document.getElementById("supplierPaymentParty").value = "";
+  document.getElementById("supplierPaymentDate").value = "";
+  document.getElementById("supplierPaymentAmount").value = "";
+  document.getElementById("supplierPaymentMode").value = "";
+  document.getElementById("supplierPaymentReference").value = "";
+  document.getElementById("supplierPaymentNote").value = "";
+
+  alert("Supplier payment saved successfully!");
+});
+
+loadPaymentSuppliers();
+renderSupplierPayments();
 </script>
 </body>
                                                        </html>
