@@ -2410,6 +2410,125 @@ document.getElementById("viewStockSummary").addEventListener(
   "click",
   renderStockSummary
 );
+// SALES RETURN MODULE
+
+const SALES_RETURN_KEY = "suraj_erp_sales_returns_v1";
+let salesReturns = [];
+
+try {
+  salesReturns = JSON.parse(
+    localStorage.getItem(SALES_RETURN_KEY) || "[]"
+  );
+  if (!Array.isArray(salesReturns)) salesReturns = [];
+} catch (e) {
+  salesReturns = [];
+}
+
+function loadSalesReturnOptions() {
+  const customerSelect = document.getElementById("salesReturnCustomer");
+  const productSelect = document.getElementById("salesReturnProduct");
+
+  customerSelect.innerHTML = '<option value="">Select Customer</option>';
+  productSelect.innerHTML = '<option value="">Select Product</option>';
+
+  customers.forEach((c, index) => {
+    const option = document.createElement("option");
+    option.value = index;
+    option.textContent = c.name;
+    customerSelect.appendChild(option);
+  });
+
+  products.forEach(p => {
+    const option = document.createElement("option");
+    option.value = p.id;
+    option.textContent = p.name + " (" + p.sku + ")";
+    productSelect.appendChild(option);
+  });
+}
+
+function renderSalesReturns() {
+  const list = document.getElementById("salesReturnList");
+
+  if (!salesReturns.length) {
+    list.textContent = "No sales returns recorded yet.";
+    return;
+  }
+
+  list.innerHTML = salesReturns.map(r => `
+    <div class="panel">
+      <strong>${safe(r.productName)}</strong>
+      <p>Date: ${safe(r.date)}</p>
+      <p>Customer: ${safe(r.customerName)}</p>
+      <p>Invoice: ${safe(r.invoiceNo || "-")}</p>
+      <p>Quantity: ${r.qty}</p>
+      <p>Return Amount: ${money(r.amount)}</p>
+      <p>Reason: ${safe(r.reason || "-")}</p>
+    </div>
+  `).join("");
+}
+
+document.getElementById("saveSalesReturn").addEventListener("click", () => {
+  const date = document.getElementById("salesReturnDate").value;
+  const customerIndex = document.getElementById("salesReturnCustomer").value;
+  const productId = document.getElementById("salesReturnProduct").value;
+  const qty = Number(document.getElementById("salesReturnQty").value);
+  const rate = Number(document.getElementById("salesReturnRate").value);
+
+  if (
+    !date || customerIndex === "" || !productId ||
+    !Number.isInteger(qty) || qty <= 0 ||
+    !Number.isFinite(rate) || rate < 0
+  ) {
+    alert("Please enter valid return details.");
+    return;
+  }
+
+  const customer = customers[Number(customerIndex)];
+  const product = products.find(p => String(p.id) === String(productId));
+
+  if (!customer || !product) {
+    alert("Customer or product not found.");
+    return;
+  }
+
+  const returnEntry = {
+    date,
+    customerName: customer.name,
+    invoiceNo: document.getElementById("salesReturnInvoice").value.trim(),
+    productId: product.id,
+    productName: product.name,
+    qty,
+    rate,
+    amount: qty * rate,
+    reason: document.getElementById("salesReturnReason").value.trim()
+  };
+
+  product.stock = Number(product.stock || 0) + qty;
+
+  if (!saveProducts()) {
+    product.stock -= qty;
+    return;
+  }
+
+  salesReturns.push(returnEntry);
+  localStorage.setItem(SALES_RETURN_KEY, JSON.stringify(salesReturns));
+
+  renderProducts();
+  renderSalesReturns();
+
+  document.getElementById("salesReturnDate").value = "";
+  document.getElementById("salesReturnInvoice").value = "";
+  document.getElementById("salesReturnCustomer").value = "";
+  document.getElementById("salesReturnProduct").value = "";
+  document.getElementById("salesReturnQty").value = "";
+  document.getElementById("salesReturnRate").value = "";
+  document.getElementById("salesReturnReason").value = "";
+
+  alert("Sales Return saved and stock updated!");
+});
+
+loadSalesReturnOptions();
+renderSalesReturns();
 </script>
 </body>
                                                        </html>
