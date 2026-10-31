@@ -2297,6 +2297,74 @@ document.getElementById("viewProfitLoss").addEventListener(
   "click",
   generateProfitLoss
 );
+// STOCK SUMMARY MODULE
+
+function renderStockSummary() {
+  const result = document.getElementById("stockSummaryResult");
+
+  const totalProducts = products.length;
+
+  const totalQty = products.reduce(
+    (sum, p) => sum + Number(p.stock || 0), 0
+  );
+
+  const inventoryValue = products.reduce(
+    (sum, p) => sum + (Number(p.stock || 0) * Number(p.purchase || 0)), 0
+  );
+
+  const lowStock = products.filter(
+    p => Number(p.stock || 0) <= Number(p.minStock || 0)
+  );
+
+  result.innerHTML = `
+    <h2>Inventory Overview</h2>
+
+    <p>Total Products: ${totalProducts}</p>
+    <p>Total Stock Quantity: ${totalQty}</p>
+    <p>Inventory Purchase Value: ${money(inventoryValue)}</p>
+    <p>Low Stock Products: ${lowStock.length}</p>
+
+    <h3>Product-wise Stock</h3>
+
+    <div style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>SKU</th>
+            <th>Stock</th>
+            <th>Purchase Price</th>
+            <th>Stock Value</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${products.map(p => {
+            const stock = Number(p.stock || 0);
+            const value = stock * Number(p.purchase || 0);
+            const isLow = stock <= Number(p.minStock || 0);
+
+            return `
+              <tr>
+                <td>${safe(p.name)}</td>
+                <td>${safe(p.sku)}</td>
+                <td>${stock}</td>
+                <td>${money(p.purchase)}</td>
+                <td>${money(value)}</td>
+                <td>${isLow ? "Low Stock" : "In Stock"}</td>
+              </tr>
+            `;
+          }).join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+document.getElementById("viewStockSummary").addEventListener(
+  "click",
+  renderStockSummary
+);
 </script>
 </body>
                                                        </html>
