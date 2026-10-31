@@ -618,6 +618,7 @@ th, td { padding:14px 12px; border-bottom:1px solid var(--line); }
   </div>
 </section>
       <section class="page" id="customers">
+        
   <div class="heading">
     <div>
       <h1>Customer Master</h1>
@@ -645,6 +646,26 @@ th, td { padding:14px 12px; border-bottom:1px solid var(--line); }
   <div class="panel">
     <h2>Customer List</h2>
     <div id="customerList">No customers added yet.</div>
+  </div>
+      </section>
+      <section class="page" id="customerLedger">
+  <div class="heading">
+    <div>
+      <h1>Customer Ledger</h1>
+      <div class="subtitle">Customer-wise sales and payment history.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Select Customer</h2>
+    <select id="ledgerCustomer">
+      <option value="">Select Customer</option>
+    </select>
+    <button class="primary" id="viewLedger">View Ledger</button>
+  </div>
+
+  <div id="ledgerResult" class="panel">
+    Please select a customer.
   </div>
       </section>
       <section class="page" id="reports"><h1>Reports</h1><p class="subtitle">Business reports and financial summaries.</p><div class="panel empty">Reports will be added after the accounting modules.</div></section>
