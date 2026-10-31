@@ -1566,20 +1566,29 @@ document.getElementById("viewLedger").addEventListener("click", () => {
   );
 
   const totalSales = customerSales.reduce(
-    (sum, s) => sum + Number(s.total || 0), 0
-  );
+  (sum, s) => sum + Number(s.total || 0), 0
+);
 
-  const totalReceived = customerSales.reduce(
-    (sum, s) => sum + Number(s.paid || 0), 0
-  );
+const invoiceReceived = customerSales.reduce(
+  (sum, s) => sum + Number(s.paid || 0), 0
+);
 
-  const pending = totalSales - totalReceived;
+const receiptReceived = receipts
+  .filter(r =>
+    Number(r.customerIndex) === Number(index) ||
+    r.customerName === customer.name
+  )
+  .reduce((sum, r) => sum + Number(r.amount || 0), 0);
 
-  const opening = Number(customer.balance || 0);
-  const openingReceivable =
-    customer.balanceType === "Receivable" ? opening : -opening;
+const totalReceived = invoiceReceived + receiptReceived;
 
-  const closingBalance = openingReceivable + pending;
+const pending = totalSales - totalReceived;
+
+const opening = Number(customer.balance || 0);
+const openingReceivable =
+  customer.balanceType === "Receivable" ? opening : -opening;
+
+const closingBalance = openingReceivable + pending;
 
   result.innerHTML = `
     <h2>${customer.name}</h2>
