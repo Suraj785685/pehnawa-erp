@@ -1872,6 +1872,115 @@ document.getElementById("saveSupplierPayment").addEventListener("click", () => {
 
 loadPaymentSuppliers();
 renderSupplierPayments();
+// SUPPLIER LEDGER MODULE
+
+function loadSupplierLedgerList() {
+  const select = document.getElementById("supplierLedgerSelect");
+  if (!select) return;
+
+  select.innerHTML = '<option value="">Select Supplier</option>';
+
+  suppliers.forEach((s, index) => {
+    const option = document.createElement("option");
+    option.value = index;
+    option.textContent = s.name;
+    select.appendChild(option);
+  });
+}
+
+function renderSupplierLedger() {
+  const index = document.getElementById("supplierLedgerSelect").value;
+  const result = document.getElementById("supplierLedgerResult");
+
+  if (index === "") {
+    alert("Please select a supplier.");
+    return;
+  }
+
+  const supplier = suppliers[Number(index)];
+
+  if (!supplier) {
+    alert("Supplier not found.");
+    return;
+  }
+
+  const supplierPurchases = purchases.filter(
+    p => p.supplier === supplier.name
+  );
+
+  const supplierPaymentsList = supplierPayments.filter(
+    p => p.supplierName === supplier.name
+  );
+
+  const totalPurchases = supplierPurchases.reduce(
+    (sum, p) => sum + Number(p.total || 0), 0
+  );
+
+  const purchasePaid = supplierPurchases.reduce(
+    (sum, p) => sum + Number(p.paid || 0), 0
+  );
+
+  const extraPayments = supplierPaymentsList.reduce(
+    (sum, p) => sum + Number(p.amount || 0), 0
+  );
+
+  const totalPaid = purchasePaid + extraPayments;
+  const pending = totalPurchases - totalPaid;
+
+  const opening = Number(supplier.balance || 0);
+  const openingPayable =
+    supplier.balanceType === "Payable" ? opening : -opening;
+
+  const closingBalance = openingPayable + pending;
+
+  result.innerHTML = `
+    <h2>${supplier.name}</h2>
+    <p>Mobile: ${supplier.mobile || "-"}</p>
+    <p>Opening Balance: ₹${opening.toFixed(2)} (${supplier.balanceType})</p>
+    <p>Total Purchases: ₹${totalPurchases.toFixed(2)}</p>
+    <p>Payment Made: ₹${totalPaid.toFixed(2)}</p>
+    <p>Pending Purchases: ₹${pending.toFixed(2)}</p>
+
+    <h3>Closing Balance: ₹${Math.abs(closingBalance).toFixed(2)}
+    (${closingBalance >= 0 ? "Payable" : "Advance"})</h3>
+
+    <h3>Purchase History</h3>
+    ${
+      supplierPurchases.length
+      ? supplierPurchases.map(p => `
+        <div class="panel">
+          <strong>Bill: ${p.billNo}</strong>
+          <p>Date: ${p.date}</p>
+          <p>Total: ₹${Number(p.total || 0).toFixed(2)}</p>
+          <p>Paid: ₹${Number(p.paid || 0).toFixed(2)}</p>
+          <p>Status: ${p.status}</p>
+        </div>
+      `).join("")
+      : "<p>No purchases found.</p>"
+    }
+
+    <h3>Payment History</h3>
+    ${
+      supplierPaymentsList.length
+      ? supplierPaymentsList.map(p => `
+        <div class="panel">
+          <p>Date: ${p.date}</p>
+          <p>Amount: ₹${Number(p.amount || 0).toFixed(2)}</p>
+          <p>Mode: ${p.mode || "-"}</p>
+          <p>Reference: ${p.reference || "-"}</p>
+        </div>
+      `).join("")
+      : "<p>No extra payments found.</p>"
+    }
+  `;
+}
+
+document.getElementById("viewSupplierLedger").addEventListener(
+  "click",
+  renderSupplierLedger
+);
+
+loadSupplierLedgerList();
 </script>
 </body>
                                                        </html>
