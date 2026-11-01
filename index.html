@@ -1920,7 +1920,8 @@ document.getElementById("saveSales").addEventListener("click", () => {
 
   const sale = {
     customer,
-    customerState: (customers.find(c => c.name === customer) || {}).state || "",
+    customerState: (customers[Number(document.getElementById("salesCustomer").value)] || {}).state || "",
+customerGSTIN: (customers[Number(document.getElementById("salesCustomer").value)] || {}).gstin || "",
     mobile,
     invoiceNo,
     date,
