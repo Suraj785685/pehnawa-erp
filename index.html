@@ -1860,6 +1860,48 @@ function updateSalesTotal() {
   const discount = Number(document.getElementById("salesDiscount").value || 0);
   const total = Math.max(0, subtotal - discount);
 
+  const itemsTaxable = salesCart.reduce(
+    (sum, item) => sum + Number(item.qty) * Number(item.rate), 0
+  );
+
+  const factor = subtotal > 0
+    ? Math.max(0, subtotal - discount) / subtotal
+    : 0;
+
+  let totalGST = 0;
+
+  salesCart.forEach(item => {
+    const taxable = Number(item.qty) * Number(item.rate);
+    totalGST += taxable * Number(item.gst) / 100;
+  });
+
+  totalGST *= factor;
+
+  const selectedIndex = document.getElementById("salesCustomer").value;
+  const selectedCustomer = selectedIndex === ""
+    ? null
+    : customers[Number(selectedIndex)];
+
+  const companyState = company.state || "Jharkhand";
+  const customerState = selectedCustomer?.state || "";
+
+  let cgst = 0;
+  let sgst = 0;
+  let igst = 0;
+
+  if (customerState) {
+    if (customerState.toLowerCase() === companyState.toLowerCase()) {
+      cgst = totalGST / 2;
+      sgst = totalGST / 2;
+    } else {
+      igst = totalGST;
+    }
+  }
+
+  document.getElementById("salesCGST").textContent = "₹" + cgst.toFixed(2);
+  document.getElementById("salesSGST").textContent = "₹" + sgst.toFixed(2);
+  document.getElementById("salesIGST").textContent = "₹" + igst.toFixed(2);
+
   document.getElementById("salesGrandTotal").textContent =
     "Grand Total: ₹" + total.toFixed(2);
 }
