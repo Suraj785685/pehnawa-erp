@@ -2577,6 +2577,130 @@ document.getElementById("saveSalesReturn").addEventListener("click", () => {
 
 loadSalesReturnOptions();
 renderSalesReturns();
+// PURCHASE RETURN MODULE
+
+const PURCHASE_RETURN_KEY = "suraj_erp_purchase_returns_v1";
+let purchaseReturns = [];
+
+try {
+  purchaseReturns = JSON.parse(
+    localStorage.getItem(PURCHASE_RETURN_KEY) || "[]"
+  );
+  if (!Array.isArray(purchaseReturns)) purchaseReturns = [];
+} catch (e) {
+  purchaseReturns = [];
+}
+
+function loadPurchaseReturnOptions() {
+  const supplierSelect = document.getElementById("purchaseReturnSupplier");
+  const productSelect = document.getElementById("purchaseReturnProduct");
+
+  supplierSelect.innerHTML = '<option value="">Select Supplier</option>';
+  productSelect.innerHTML = '<option value="">Select Product</option>';
+
+  suppliers.forEach((s, index) => {
+    const option = document.createElement("option");
+    option.value = index;
+    option.textContent = s.name;
+    supplierSelect.appendChild(option);
+  });
+
+  products.forEach(p => {
+    const option = document.createElement("option");
+    option.value = p.id;
+    option.textContent = p.name + " (" + p.sku + ")";
+    productSelect.appendChild(option);
+  });
+}
+
+function renderPurchaseReturns() {
+  const list = document.getElementById("purchaseReturnList");
+
+  if (!purchaseReturns.length) {
+    list.textContent = "No purchase returns recorded yet.";
+    return;
+  }
+
+  list.innerHTML = purchaseReturns.map(r => `
+    <div class="panel">
+      <strong>${safe(r.productName)}</strong>
+      <p>Date: ${safe(r.date)}</p>
+      <p>Supplier: ${safe(r.supplierName)}</p>
+      <p>Bill: ${safe(r.billNo || "-")}</p>
+      <p>Quantity: ${r.qty}</p>
+      <p>Return Amount: ${money(r.amount)}</p>
+      <p>Reason: ${safe(r.reason || "-")}</p>
+    </div>
+  `).join("");
+}
+
+document.getElementById("savePurchaseReturn").addEventListener("click", () => {
+  const date = document.getElementById("purchaseReturnDate").value;
+  const supplierIndex = document.getElementById("purchaseReturnSupplier").value;
+  const productId = document.getElementById("purchaseReturnProduct").value;
+  const qty = Number(document.getElementById("purchaseReturnQty").value);
+  const rate = Number(document.getElementById("purchaseReturnRate").value);
+
+  if (
+    !date || supplierIndex === "" || !productId ||
+    !Number.isInteger(qty) || qty <= 0 ||
+    !Number.isFinite(rate) || rate < 0
+  ) {
+    alert("Please enter valid return details.");
+    return;
+  }
+
+  const supplier = suppliers[Number(supplierIndex)];
+  const product = products.find(p => String(p.id) === String(productId));
+
+  if (!supplier || !product) {
+    alert("Supplier or product not found.");
+    return;
+  }
+
+  if (Number(product.stock || 0) < qty) {
+    alert("Return quantity cannot exceed available stock.");
+    return;
+  }
+
+  const returnEntry = {
+    date,
+    supplierName: supplier.name,
+    billNo: document.getElementById("purchaseReturnBill").value.trim(),
+    productId: product.id,
+    productName: product.name,
+    qty,
+    rate,
+    amount: qty * rate,
+    reason: document.getElementById("purchaseReturnReason").value.trim()
+  };
+
+  product.stock = Number(product.stock || 0) - qty;
+
+  if (!saveProducts()) {
+    product.stock += qty;
+    return;
+  }
+
+  purchaseReturns.push(returnEntry);
+  localStorage.setItem(PURCHASE_RETURN_KEY, JSON.stringify(purchaseReturns));
+
+  renderProducts();
+  renderPurchaseReturns();
+
+  document.getElementById("purchaseReturnDate").value = "";
+  document.getElementById("purchaseReturnBill").value = "";
+  document.getElementById("purchaseReturnSupplier").value = "";
+  document.getElementById("purchaseReturnProduct").value = "";
+  document.getElementById("purchaseReturnQty").value = "";
+  document.getElementById("purchaseReturnRate").value = "";
+  document.getElementById("purchaseReturnReason").value = "";
+
+  alert("Purchase Return saved and stock updated!");
+});
+
+loadPurchaseReturnOptions();
+renderPurchaseReturns();
 </script>
 </body>
                                                        </html>
