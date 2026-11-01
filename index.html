@@ -3093,8 +3093,23 @@ function loadCustomerStates() {
     dropdown.appendChild(option);
   });
 }
+  function loadSupplierStates() {
+  const dropdown = document.getElementById("supplierState");
+
+  if (!dropdown) return;
+
+  dropdown.innerHTML = '<option value="">Select State</option>';
+
+  states.forEach(state => {
+    const option = document.createElement("option");
+    option.value = state.name;
+    option.textContent = state.name + " (" + state.code + ")";
+    dropdown.appendChild(option);
+  });
+  }
 renderStates();
   loadCustomerStates();
+  loadSupplierStates();
 </script>
 </body>
                                                        </html>
