@@ -2039,7 +2039,31 @@ document.getElementById("saveSales").addEventListener("click", () => {
     products = previousProducts;
     return;
   }
+const selectedCustomer =
+  customers[Number(document.getElementById("salesCustomer").value)] || {};
 
+const itemsSubtotal = salesCart.reduce(
+  (sum, item) => sum + Number(item.total || 0), 0
+);
+
+const discountFactor = itemsSubtotal > 0
+  ? Math.max(0, itemsSubtotal - discount) / itemsSubtotal
+  : 0;
+
+let totalGST = salesCart.reduce((sum, item) => {
+  const taxable = Number(item.qty) * Number(item.rate);
+  return sum + taxable * Number(item.gst) / 100;
+}, 0);
+
+totalGST *= discountFactor;
+
+const sameState = selectedCustomer.state &&
+  selectedCustomer.state.toLowerCase() ===
+  (company.state || "Jharkhand").toLowerCase();
+
+const cgstAmount = sameState ? totalGST / 2 : 0;
+const sgstAmount = sameState ? totalGST / 2 : 0;
+const igstAmount = selectedCustomer.state && !sameState ? totalGST : 0;
   const sale = {
     customer,
     customerState: (customers[Number(document.getElementById("salesCustomer").value)] || {}).state || "",
@@ -2050,6 +2074,9 @@ customerGSTIN: (customers[Number(document.getElementById("salesCustomer").value)
     items: [...salesCart],
     subtotal,
     discount,
+    cgst: cgstAmount,
+sgst: sgstAmount,
+igst: igstAmount,
     total,
     paid,
     status: paid === 0 ? "Unpaid" : paid >= total ? "Paid" : "Partial"
