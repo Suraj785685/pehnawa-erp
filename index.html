@@ -1208,7 +1208,34 @@ th, td { padding:14px 12px; border-bottom:1px solid var(--line); }
   </div>
       </section>
       <section class="page" id="reports"><h1>Reports</h1><p class="subtitle">Business reports and financial summaries.</p><div class="panel empty">Reports will be added after the accounting modules.</div></section>
-      <section class="page" id="settings"><h1>Settings</h1><p class="subtitle">Company preferences and system configuration.</p><div class="panel empty">Settings module is not connected yet.</div></section>
+      <section class="page" id="settings">
+  <div class="page-header">
+    <div>
+      <h1>Company Settings</h1>
+      <p>Company details and GST configuration</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Company Information</h2>
+
+    <div class="form-grid">
+      <input id="companyName" placeholder="Company Name">
+      <input id="companyGSTIN" placeholder="Company GSTIN">
+
+      <select id="companyState">
+        <option value="Jharkhand">Jharkhand (20)</option>
+      </select>
+
+      <input id="companyAddress" placeholder="Business Address">
+      <input id="companyPIN" placeholder="PIN Code" maxlength="6">
+    </div>
+
+    <button class="primary" id="saveCompany">
+      Save Company Details
+    </button>
+  </div>
+      </section>
       <div class="footer">Pehnawa ERP · Frontend Demo · Do not use sample figures for business decisions.</div>
     </div>
   </main>
