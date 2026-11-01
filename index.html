@@ -1987,8 +1987,13 @@ function renderSalesList() {
       <strong>${s.invoiceNo}</strong>
       <p>Customer: ${s.customer}</p>
       <p>Date: ${s.date}</p>
-      <p>Total: ₹${s.total.toFixed(2)}</p>
-      <p>Received: ₹${s.paid.toFixed(2)} | ${s.status}</p>
+      <p>Taxable Amount: ₹${Number(s.subtotal || 0).toFixed(2)}</p>
+      <p>Discount: ₹${Number(s.discount || 0).toFixed(2)}</p>
+      <p>CGST: ₹${Number(s.cgst || 0).toFixed(2)}</p>
+      <p>SGST: ₹${Number(s.sgst || 0).toFixed(2)}</p>
+      <p>IGST: ₹${Number(s.igst || 0).toFixed(2)}</p>
+      <p><b>Grand Total: ₹${Number(s.total || 0).toFixed(2)}</b></p>
+      <p>Received: ₹${Number(s.paid || 0).toFixed(2)} | ${s.status}</p>
     </div>
   `).join("");
 }
