@@ -745,6 +745,41 @@ th, td { padding:14px 12px; border-bottom:1px solid var(--line); }
     <div id="salesReturnList">No sales returns recorded yet.</div>
   </div>
       </section>
+      <section class="page" id="purchaseReturn">
+  <div class="heading">
+    <div>
+      <h1>Purchase Return</h1>
+      <div class="subtitle">Record goods returned to suppliers.</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Add Purchase Return</h2>
+    <div class="form-grid">
+      <input type="date" id="purchaseReturnDate">
+      <input type="text" id="purchaseReturnBill" placeholder="Original Purchase Bill No">
+
+      <select id="purchaseReturnSupplier">
+        <option value="">Select Supplier</option>
+      </select>
+
+      <select id="purchaseReturnProduct">
+        <option value="">Select Product</option>
+      </select>
+
+      <input type="number" id="purchaseReturnQty" min="1" step="1" placeholder="Return Quantity">
+      <input type="number" id="purchaseReturnRate" min="0" step="0.01" placeholder="Return Rate">
+      <input type="text" id="purchaseReturnReason" placeholder="Return Reason">
+    </div>
+
+    <button class="primary" id="savePurchaseReturn">Save Purchase Return</button>
+  </div>
+
+  <div class="panel">
+    <h2>Purchase Return History</h2>
+    <div id="purchaseReturnList">No purchase returns recorded yet.</div>
+  </div>
+      </section>
 <section class="page" id="inventory">
   <div class="heading">
     <div>
