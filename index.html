@@ -1915,6 +1915,7 @@ document.getElementById("salesCustomer").addEventListener("change", () => {
 
   if (index === "") {
     document.getElementById("salesMobile").value = "";
+    updateSalesTotal();
     return;
   }
 
@@ -1923,6 +1924,8 @@ document.getElementById("salesCustomer").addEventListener("change", () => {
   if (customer) {
     document.getElementById("salesMobile").value = customer.mobile || "";
   }
+
+  updateSalesTotal();
 });
 document.getElementById("salesProduct").addEventListener("change", () => {
   const id = document.getElementById("salesProduct").value;
