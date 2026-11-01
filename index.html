@@ -1241,6 +1241,38 @@ th, td { padding:14px 12px; border-bottom:1px solid var(--line); }
   </main>
 </div>
 <script>
+  const COMPANY_KEY = "suraj_erp_company_v1";
+
+let company = {};
+
+try {
+  company = JSON.parse(localStorage.getItem(COMPANY_KEY) || "{}");
+} catch (e) {
+  company = {};
+}
+
+function loadCompanySettings() {
+  document.getElementById("companyName").value = company.name || "";
+  document.getElementById("companyGSTIN").value = company.gstin || "";
+  document.getElementById("companyState").value = company.state || "Jharkhand";
+  document.getElementById("companyAddress").value = company.address || "";
+  document.getElementById("companyPIN").value = company.pin || "";
+}
+
+document.getElementById("saveCompany").addEventListener("click", () => {
+  company = {
+    name: document.getElementById("companyName").value.trim(),
+    gstin: document.getElementById("companyGSTIN").value.trim().toUpperCase(),
+    state: document.getElementById("companyState").value,
+    address: document.getElementById("companyAddress").value.trim(),
+    pin: document.getElementById("companyPIN").value.trim()
+  };
+
+  localStorage.setItem(COMPANY_KEY, JSON.stringify(company));
+  alert("Company details saved successfully!");
+});
+
+loadCompanySettings();
 const CUSTOMER_KEY = "pehnawa_customers_v1";
 let customers = [];
 
