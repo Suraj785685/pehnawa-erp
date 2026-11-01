@@ -847,6 +847,83 @@ th, td { padding:14px 12px; border-bottom:1px solid var(--line); }
     <div id="purchaseReturnList">No purchase returns recorded yet.</div>
   </div>
       </section>
+      
+<section class="page" id="gstReports">
+
+  <div class="page-header">
+    <div>
+      <h1>GST Reports</h1>
+      <p>GST summary, sales and purchase registers</p>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <span>Output GST</span>
+      <h2 id="gstOutput">₹0.00</h2>
+    </div>
+
+    <div class="card">
+      <span>Input GST</span>
+      <h2 id="gstInput">₹0.00</h2>
+    </div>
+
+    <div class="card">
+      <span>Net GST Payable</span>
+      <h2 id="gstPayable">₹0.00</h2>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Report Period</h2>
+
+    <div class="form-grid">
+      <label>
+        From Date
+        <input type="date" id="gstFrom">
+      </label>
+
+      <label>
+        To Date
+        <input type="date" id="gstTo">
+      </label>
+    </div>
+
+    <button class="btn" id="generateGST">
+      Generate Report
+    </button>
+  </div>
+
+  <div class="panel">
+    <h2>GST Summary</h2>
+    <div id="gstSummary">
+      Select dates and generate report.
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Sales Register</h2>
+    <div id="gstSalesRegister">
+      No report generated.
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Purchase Register</h2>
+    <div id="gstPurchaseRegister">
+      No report generated.
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Return Summary</h2>
+    <div id="gstReturnSummary">
+      No report generated.
+    </div>
+  </div>
+
+</section>
+      
 <section class="page" id="inventory">
   <div class="heading">
     <div>
