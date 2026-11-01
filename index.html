@@ -2982,6 +2982,74 @@ function generateGSTReport() {
 document.getElementById("generateGST")
   .addEventListener("click", generateGSTReport);
   
+
+const STATE_KEY = "suraj_erp_states_v1";
+
+let states = [];
+
+try {
+  states = JSON.parse(localStorage.getItem(STATE_KEY) || "[]");
+  if (!Array.isArray(states)) states = [];
+} catch (e) {
+  states = [];
+}
+
+function saveStates() {
+  localStorage.setItem(STATE_KEY, JSON.stringify(states));
+}
+
+function renderStates() {
+  const box = document.getElementById("stateList");
+
+  if (!states.length) {
+    box.textContent = "No states added yet.";
+    return;
+  }
+
+  box.innerHTML = states.map((state, index) => `
+    <div style="display:flex;justify-content:space-between;
+    align-items:center;padding:12px;border-bottom:1px solid #ddd">
+      <span>
+        <b>${state.name}</b> — Code: ${state.code}
+      </span>
+      <button onclick="deleteState(${index})">Delete</button>
+    </div>
+  `).join("");
+}
+
+document.getElementById("saveState").addEventListener("click", () => {
+  const name = document.getElementById("stateName").value.trim();
+  const code = document.getElementById("stateCode").value.trim();
+
+  if (!name || !/^\d{2}$/.test(code)) {
+    alert("Enter state name and valid 2-digit GST code.");
+    return;
+  }
+
+  if (states.some(s => s.code === code || s.name.toLowerCase() === name.toLowerCase())) {
+    alert("This state name or code already exists.");
+    return;
+  }
+
+  states.push({ name, code });
+  saveStates();
+
+  document.getElementById("stateName").value = "";
+  document.getElementById("stateCode").value = "";
+
+  renderStates();
+  alert("State saved successfully!");
+});
+
+function deleteState(index) {
+  if (!confirm("Delete this state?")) return;
+
+  states.splice(index, 1);
+  saveStates();
+  renderStates();
+}
+
+renderStates();
 </script>
 </body>
                                                        </html>
