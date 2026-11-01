@@ -6,6 +6,38 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Suraj ERP | Dashboard</title>
   <style>
+    /* PROFESSIONAL MOBILE INDEPENDENT SCROLL */
+
+@media (max-width:700px) {
+  html, body {
+    height: 100%;
+    overflow: hidden !important;
+  }
+
+  .app {
+    height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  .sidebar {
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding-bottom: 40px !important;
+  }
+
+  .main {
+    height: 100dvh !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+}
     /* MOBILE SIDEBAR SCROLL FIX */
 
 .sidebar {
