@@ -3168,6 +3168,36 @@ function downloadGSTCSV(filename, rows) {
 
   document.getElementById("gstReturnSummary").textContent =
     "Sales and purchase returns are not included yet.";
+document.getElementById("exportGSTSales").onclick = () => {
+  const rows = [
+    ["Invoice No", "Date", "Customer", "Taxable Amount",
+     "Discount", "CGST", "SGST", "IGST", "Grand Total", "Received", "Status"]
+  ];
+
+  filteredSales.forEach(s => {
+    rows.push([
+      s.invoiceNo, s.date, s.customer, s.subtotal,
+      s.discount, s.cgst || 0, s.sgst || 0, s.igst || 0,
+      s.total, s.paid, s.status
+    ]);
+  });
+
+  downloadGSTCSV("GST-Sales-Register.csv", rows);
+};
+
+document.getElementById("exportGSTPurchase").onclick = () => {
+  const rows = [
+    ["Bill No", "Date", "Supplier", "Total Amount", "Paid", "Status"]
+  ];
+
+  filteredPurchases.forEach(p => {
+    rows.push([
+      p.billNo, p.date, p.supplier, p.total, p.paid, p.status
+    ]);
+  });
+
+  downloadGSTCSV("GST-Purchase-Register.csv", rows);
+};
 }
 
 document.getElementById("generateGST")
