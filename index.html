@@ -3175,7 +3175,72 @@ function downloadGSTCSV(filename, rows) {
 
   const netGST = outputGST - inputGST;
 
-  document.getElementById("gstOutput").textContent =
+  const sameStateSales = filteredSales.reduce((sum, s) => {
+  const customer = customers.find(c => c.name === s.customer);
+  const customerState = customer?.state || s.customerState || "";
+
+  if (
+    customerState.toLowerCase() ===
+    (company.state || "Jharkhand").toLowerCase()
+  ) {
+    return sum + Number(s.cgst || 0);
+  }
+
+  return sum;
+}, 0);
+
+const sameStateSalesSGST = filteredSales.reduce((sum, s) => {
+  const customer = customers.find(c => c.name === s.customer);
+  const customerState = customer?.state || s.customerState || "";
+
+  if (
+    customerState.toLowerCase() ===
+    (company.state || "Jharkhand").toLowerCase()
+  ) {
+    return sum + Number(s.sgst || 0);
+  }
+
+  return sum;
+}, 0);
+
+const outputIGST = filteredSales.reduce((sum, s) =>
+  sum + Number(s.igst || 0), 0
+);
+
+const inputCGST = inputGST / 2;
+const inputSGST = inputGST / 2;
+const inputIGST = 0;
+
+document.getElementById("gstOutputCGST").textContent =
+  "₹" + sameStateSales.toFixed(2);
+
+document.getElementById("gstOutputSGST").textContent =
+  "₹" + sameStateSalesSGST.toFixed(2);
+
+document.getElementById("gstOutputIGST").textContent =
+  "₹" + outputIGST.toFixed(2);
+
+document.getElementById("gstInputCGST").textContent =
+  "₹" + inputCGST.toFixed(2);
+
+document.getElementById("gstInputSGST").textContent =
+  "₹" + inputSGST.toFixed(2);
+
+document.getElementById("gstInputIGST").textContent =
+  "₹" + inputIGST.toFixed(2);
+
+document.getElementById("gstPayable").textContent =
+  "₹" + netGST.toFixed(2);
+
+document.getElementById("gstSummary").innerHTML = `
+  <p>Sales Taxable Value: ₹${salesTaxable.toFixed(2)}</p>
+  <p>Purchase Taxable Value: ₹${purchaseTaxable.toFixed(2)}</p>
+  <p>Output GST: ₹${outputGST.toFixed(2)}</p>
+  <p>Input GST: ₹${inputGST.toFixed(2)}</p>
+  <p><b>Net GST: ₹${netGST.toFixed(2)}</b></p>
+  <p>Sales Invoices: ${filteredSales.length}</p>
+  <p>Purchase Invoices: ${filteredPurchases.length}</p>
+`;
     "₹" + outputGST.toFixed(2);
 
   document.getElementById("gstInput").textContent =
